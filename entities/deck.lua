@@ -1,13 +1,15 @@
 local request = require("http.request")
 local cjson = require("cjson")
 
+---@class Cards
+---@field card table[Card]
+
 --- @class Card
 --- @field id string
 --- @field name string|table
---- @field count number
---- @field mana Card
---- @field image Card
---- @field type_line Card
+--- @field mana string
+--- @field image string
+--- @field type string
 
 local card = {}
 
@@ -16,7 +18,7 @@ local card = {}
 --- @field deck_link string
 --- @field commander string|table
 --- @field num_cards  number
---- @field cards table[Card..]
+--- @field cards table[Card]
 
 local Deck = {}
 
@@ -38,14 +40,30 @@ function Deck.read_json_file(json_fp)
 	return contents
 end
 
-local function to_card(cards)
+--- take json array of cards turn them into card
+--- objects return table of each card
+---@param json_cards table
+---@return table[Cards]
+local function to_card(json_cards)
+	---@type table[Card]
+	local cards = {}
+
 	local no_digest = {}
-	for _, val in pairs(cards) do
+	for _, val in pairs(json_cards) do
 		if val.card_digest == cjson.null then
 			local card_name = string.sub(val.raw_text, 3)
 			no_digest[#no_digest + 1] = card_name
 		else
-			print(val.card_digest.name)
+			---@type Card
+			card = {
+				id = val.card_digest.id,
+				name = val.card_digest.name,
+				image = val.card_digest.image_uris.front,
+				mana = val.card_digest.mana_cost,
+				type = val.card_digest.type,
+			}
+      cards[#cards+1] = card
+      print(cards)
 		end
 	end
 
@@ -57,7 +75,10 @@ local function to_card(cards)
 		for i, val in pairs(no_digest) do
 			print(i .. ") " .. val)
 		end
+
 	end
+	print("\n\n")
+	return cards
 end
 
 function Deck.parse_json_to_deck(json_fp)
@@ -83,10 +104,11 @@ function Deck.parse_json_to_deck(json_fp)
 	to_card(Deck.lands)
 end
 
+
 function Deck.output_deck_list(deck, card_type)
 	local count = 0
 	for _, val in pairs(deck[card_type]) do
-		if val.card_digest == nil then
+		if val.card_digest == cjson.null then
 			goto continue
 		end
 		count = count + 1
@@ -95,7 +117,24 @@ function Deck.output_deck_list(deck, card_type)
 	end
 end
 
+
+--- get the card image via scryfall api
+---@param card_name string
+---@param save_fp string|nil
+---@param image_url string
+local function get_card_img(card_name, image_url, save_fp)
+	os.execute("curl -s " .. image_url .. " --output " .. save_fp)
+  print(card_name)
+  print(("-"):rep(#card_name))
+	os.execute("kitty icat " .. save_fp)
+end
+
 Deck.parse_json_to_deck("/home/benten/projects/programming/lua/games/MagicMoon/test_files/my_deck.json")
+print(Deck.cards.name)
+-- local url = Deck.cards[5].image
+-- local name= Deck.cards[5].name
+-- local save_fp = "/home/benten/projects/programming/lua/games/MagicMoon/test_files/my_card.jpg"
+-- get_card_img(name,url , save_fp)
 -- Deck.output_deck_list(Deck, "nonlands")
 -- Deck.output_deck_list(Deck, "lands")
 -- print(Deck.commander.type_line)
