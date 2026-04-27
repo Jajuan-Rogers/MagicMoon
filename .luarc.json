@@ -5,7 +5,8 @@
     ],
     "Lua.workspace.library": [
         "~/.local/share/love-api",
-        "/home/youruser/.luarocks/share/lua/5.5"
+        "/home/youruser/.luarocks/share/lua/5.5",
+        "${3rd}/love2d/library"
     ],
     "Lua.workspace.checkThirdParty": false,
     "Lua.completion.callSnippet": "Replace",

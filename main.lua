@@ -1,7 +1,62 @@
+---@module 'ui.gameboard'
+local gameboard = require("ui.gameboard")
 
-function love.load(x)
+HALF_SCREEN_X = 960
+HALF_SCREEN_Y = 840
+local CARD_WIDTH = 200
+local CARD_HEIGHT = CARD_WIDTH * (3.5 / 2.5) -- Results in 280
+
+function love.load()
+	love.window.setMode(1920, 1080, { fullscreen = true, fullscreentype = "exclusive" })
+	Mat = love.graphics.newImage(gameboard.playmat_image)
+	local mat_w, mat_h = Mat:getDimensions()
+	Mat_scaleX = gameboard.size.w / mat_w
+	Mat_scaleY = gameboard.size.h / mat_h
 end
 
-function love.draw()
-	love.graphics.draw(1)
+function love.update(dt) end
+
+function love.draw(dt)
+	local count = 0
+	local rotation = 3
+	love.graphics.setColor(gameboard.bg_color)
+	love.graphics.rectangle("line", gameboard.size.x, gameboard.size.y, gameboard.size.w, gameboard.size.h)
+	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
+
+	for i = 1, 8 do
+		love.graphics.setColor(3 / 255, 49 / 255, 140 / 255, 1)
+		love.graphics.rectangle("fill", HALF_SCREEN_X + count, HALF_SCREEN_Y, CARD_WIDTH, CARD_HEIGHT)
+		love.graphics.setLineWidth(3)
+		love.graphics.setColor(0, 0, 0, 1)
+		love.graphics.rectangle("line", HALF_SCREEN_X + count, HALF_SCREEN_Y, CARD_WIDTH, CARD_HEIGHT)
+		love.graphics.setLineWidth(1)
+		count = count + 90
+	end
 end
+
+
+--increment the color of an object
+--@param channel ColorChannel
+-- local function inc_color_val(channel, dt)
+-- 	if channel.frwd then
+-- 		channel.val = channel.val + (channel.inc * dt)
+-- 	else
+-- 		channel.val = channel.val - (channel.inc * dt)
+-- 	end
+--
+-- 	if channel.val >= 1.5 and channel.frwd then
+-- 		channel.frwd = false
+-- 	elseif channel.val <= 0.0 and not channel.frwd then
+-- 		channel.frwd = true
+-- 	end
+-- 	return channel.val
+-- end
+--
+-- function love.update(dt)
+-- 	-- Increase the angle over time (multiplied by speed)
+-- 	angleOffset = angleOffset + (1 * dt)
+-- 	r = inc_color_val(r_channel,dt)
+-- 	g = inc_color_val(g_channel,dt)
+-- 	b = inc_color_val(b_channel,dt)
+-- end
+--

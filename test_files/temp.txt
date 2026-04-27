@@ -1,0 +1,81 @@
+1 Clavileño, First of the Blessed (LCC) 2
+1 Arcane Signet (C20) 237
+1 Austere Command (2XM) 7
+1 Bartolomé del Presidio (LCI) 301
+1 Blade of the Bloodchief (LCC) 300
+1 Blood Artist (PLST) C17-99
+1 Bloodghast (DFT) 77
+1 Bloodline Necromancer (LCC) 185
+1 Bloodtracker (C18) 14
+1 Bojuka Bog (PLST) C18-238
+1 Butcher of Malakir (MIC) 107
+1 Carmen, Cruel Skymarcher (LCC) 5
+1 Champion of Dusk (VOC) 124
+1 Charismatic Conqueror (LCC) 70
+1 Command Tower (CM2) 242
+1 Commander's Sphere (MIC) 159
+1 Cordial Vampire (MH1) 83
+1 Crossway Troublemakers (LCC) 190
+1 Cruel Celebrant (WAR) 188
+1 Damn (MH2) 396
+1 Drana, Liberator of Malakir (LCC) 193
+1 Dusk Legion Sergeant (LCC) 80
+1 Dusk Legion Zealot (PLST) RIX-70
+1 Elenda, the Dusk Rose (LCC) 268
+1 Elenda's Hierophant (LCC) 71
+1 Etchings of the Chosen (MH1) 198
+1 Exquisite Blood (PLST) JMP-231
+1 Falkenrath Noble (MM3) 70
+1 Glass-Cast Heart (VOC) 18
+1 Heirloom Blade (C20) 242
+1 Indulgent Aristocrat (VOC) 130
+1 Isolated Chapel (OTC) 301
+1 Kindred Boon (PLST) C17-5
+1 Legion Lieutenant (LCC) 275
+1 March of the Canonized (LCC) 73
+1 Martyr of Dusk (RIX) 14
+1 Master of Dark Rites (LCC) 83
+1 Mavren Fein, Dusk Apostle (LCC) 133
+1 Mind Stone (DDP) 65
+1 Myriad Landscape (WHO) 290
+1 New Blood (LCC) 202
+1 Nighthawk Scavenger (ZNR) 115
+1 Oathsworn Vampire (RIX) 80
+1 Olivia's Wrath (VOC) 20
+1 Order of Sacred Dusk (LCC) 97
+1 Orzhov Basilica (PLST) C17-268
+1 Orzhov Signet (LCC) 310
+1 Pact of the Serpent (LCC) 206
+1 Path of Ancestry (C20) 298
+1 Patron of the Vein (VOC) 135
+8 Plains (J25) 81
+1 Promise of Aclazotz / Foul Rebirth (LCC) 84
+1 Radiant Destiny (LCC) 135
+1 Redemption Choir (LCC) 74
+1 Return to Dust (CMA) 20
+1 Rogue's Passage (C19) 270
+1 Sanctum Seeker (VOC) 136
+1 Secluded Courtyard (CMM) 1030
+1 Shineshadow Snarl (LTC) 331
+1 Sol Ring (KHC) 104
+1 Sorin, Lord of Innistrad (LCC) 289
+13 Swamp (J25) 89
+1 Swiftfoot Boots (PLIST) 271
+1 Swords to Plowshares (NEC) 89
+1 Tainted Field (E02) 47
+1 Talisman of Hierarchy (CLB) 878
+1 Temple of Silence (M21) 255
+1 Temple of the False God (PLST) C18-285
+1 Timothar, Baron of Bats (VOC) 4
+1 Twilight Prophet (LCC) 211
+1 Unclaimed Territory (XLN) 258
+1 Utter End (C16) 226
+1 Vault of the Archangel (CLB) 927
+1 Village Rites (KHM) 117
+1 Viscera Seer (LCC) 213
+1 Voldaren Estate (VOW) 267
+1 Vona, Butcher of Magan (XLN) 231
+1 Wayfarer's Bauble (MM2) 234
+1 Welcoming Vampire (VOW) 46
+1 Windbrisk Heights (CLB) 930
+1 Yahenni, Undying Partisan (2X2) 99

@@ -22,14 +22,6 @@ local card = {}
 
 local Deck = {}
 
-function Deck.fetch_scryfall_deck(link)
-	if string.find("scryfall", link, 8, true) then
-		print("scryfall link is official !")
-	end
-	local headers, stream = assert(request.new_from_uri(link):go())
-	local body = assert(stream:get_body_as_string())
-end
-
 function Deck.read_json_file(json_fp)
 	local file = io.open(json_fp, "r")
 	if not file then
@@ -62,8 +54,7 @@ local function to_card(json_cards)
 				mana = val.card_digest.mana_cost,
 				type = val.card_digest.type,
 			}
-      cards[#cards+1] = card
-      print(cards)
+			Deck.cards[#Deck.cards + 1] = card
 		end
 	end
 
@@ -75,7 +66,6 @@ local function to_card(json_cards)
 		for i, val in pairs(no_digest) do
 			print(i .. ") " .. val)
 		end
-
 	end
 	print("\n\n")
 	return cards
@@ -104,8 +94,11 @@ function Deck.parse_json_to_deck(json_fp)
 	to_card(Deck.lands)
 end
 
-
-function Deck.output_deck_list(deck, card_type)
+---get all cards of one of the following types:
+---creatures, lands, nonlands, artifacts
+---@param deck Deck
+---@param card_type "creatures"|"lands"|"nonlands"|"artifacts"
+function Deck.get_deck_list(deck, card_type)
 	local count = 0
 	for _, val in pairs(deck[card_type]) do
 		if val.card_digest == cjson.null then
@@ -117,6 +110,10 @@ function Deck.output_deck_list(deck, card_type)
 	end
 end
 
+function Deck.shuffle() end
+
+local function get_deck()
+end
 
 --- get the card image via scryfall api
 ---@param card_name string
@@ -124,15 +121,15 @@ end
 ---@param image_url string
 local function get_card_img(card_name, image_url, save_fp)
 	os.execute("curl -s " .. image_url .. " --output " .. save_fp)
-  print(card_name)
-  print(("-"):rep(#card_name))
+	print(card_name)
+	print(("-"):rep(#card_name))
 	os.execute("kitty icat " .. save_fp)
 end
 
 Deck.parse_json_to_deck("/home/benten/projects/programming/lua/games/MagicMoon/test_files/my_deck.json")
-print(Deck.cards.name)
--- local url = Deck.cards[5].image
--- local name= Deck.cards[5].name
+
+-- local url = Deck.cards[50].image
+-- local name= Deck.cards[50].name
 -- local save_fp = "/home/benten/projects/programming/lua/games/MagicMoon/test_files/my_card.jpg"
 -- get_card_img(name,url , save_fp)
 -- Deck.output_deck_list(Deck, "nonlands")
