@@ -112,6 +112,8 @@ function Card.new(
 	self.y = y
 	self.w = CARD_WIDTH
 	self.h = CARD_HEIGHT
+
+
 	return self
 end
 
@@ -140,9 +142,19 @@ function Card:update(dt)
 	end
 end
 
-function Card:draw_to_screen()
+function Card:load()
+	self.image_fp = "assets/images/black_lotus.png"
+	return self.image_fp
+end
+
+---comment
+---@param img love.Image
+function Card:draw_to_screen(img)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+  local img_w, img_h = img:getDimensions()
+  self.scaleX = self.w/img_w
+  self.scaleY = self.h/img_h
+	love.graphics.draw(img, self.x, self.y, 0, self.scaleX, self.scaleY)
 end
 
 return Card

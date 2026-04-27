@@ -22,6 +22,7 @@ function love.load()
 		nil, "CREATURE", "test_00",
 		1, {}, nil, nil, nil, nil,
 		"Hand", 960, 840)
+  CARD_1_IMG = love.graphics.newImage(Card_1:load())
 end
 
 function love.update(dt)
@@ -35,7 +36,7 @@ function love.draw(dt)
 	love.graphics.rectangle("line", gameboard.size.x, gameboard.size.y, gameboard.size.w, gameboard.size.h)
 	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
 
-  Card_1:draw_to_screen()
+  Card_1:draw_to_screen(CARD_1_IMG)
 end
 
 --increment the color of an object
