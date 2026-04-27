@@ -12,29 +12,28 @@ local cjson = require("cjson")
 local Deck = {}
 Deck.__index = Deck
 
-
----@param owner Player
----@param deck_data string
+---create new deck. this should be called as soon as a new player 
+---joins the game or creates a new game
+---@param owner any
+---@param deck_data any
 ---@return nil
 function Deck.new(owner, deck_data)
 	local self = setmetatable({}, Deck)
 	self.owner = owner
-	if deck_data == nil then
+	if deck_data ~= nil then
 		---Note assert this return value to ensure its not true
 		return nil
 	else
 		self.deck_data = deck_data
 	end
+  
+  if self.deck_data
+
 end
-
-
+end
 function Deck:load_deck()
-  local f = assert(io.open(self.deck_data, "r"))
-  local f_data = f:read("*a")
-  f:close()
-  local f_data = cjson.decode(f_data)
+  local data = cjson.decode
 end
-
 
 function Deck:mullagain() end
 

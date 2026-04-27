@@ -7,10 +7,12 @@ local deck = require("./deck.lua")
 ---@field deck Deck
 ---@field commander Card
 ---@field Hand table[Card]
+
+
+
 local Player = {}
 
 function Player.draw_card() end
-
 
 ---@param n number
 function Player.scry(n) end

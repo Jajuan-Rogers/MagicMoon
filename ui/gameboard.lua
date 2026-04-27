@@ -1,3 +1,5 @@
+---@module "utils.constants"
+local const = require("utils.constants")
 ---@class SizeArray
 ---@field x number
 ---@field y number
@@ -17,7 +19,7 @@
 local GameBoard = {
   bg_color= {3,49,140,1},
   playmat_image= "assets/images/default_playmat.jpg",
-	size = { x=430, y=10, w=1480, h=1060 }
+	size = { x=830, y=30, w=const.SCREEN_WIDTH-830, h=const.SCREEN_HEIGHT-30}
 }
 
 ---get the gameboard obj to draw onto the screen

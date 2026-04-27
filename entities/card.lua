@@ -1,10 +1,11 @@
-local CARD_WIDTH = 200
-local CARD_HEIGHT = CARD_WIDTH * (3.5 / 2.5) -- Results in 280
-local HALF_SCREEN_X = 960
-local HALF_SCREEN_Y = 840
+---@module "utils.constants"
+local const = require("utils.constants")
+
 
 local Card = {}
 Card.__index = Card
+
+
 
 ---
 ---@enum ManaColor
@@ -92,6 +93,7 @@ function Card.new(
 	x,
 	y
 )
+
 	local self = setmetatable({}, Card)
 	self.name = name
 	self.power = power
@@ -110,12 +112,16 @@ function Card.new(
 	self.base_y = y
 	self.x = x
 	self.y = y
-	self.w = CARD_WIDTH
-	self.h = CARD_HEIGHT
-
-
+	self.w = const.HAND_CARD_WIDTH
+	self.h = const.HAND_CARD_HEIGHT
 	return self
 end
+
+
+
+
+
+
 
 function Card:update(dt)
 	local mx, my = love.mouse.getPosition()
@@ -123,22 +129,22 @@ function Card:update(dt)
 	if mx >= self.x and mx <= self.x + self.w and my >= self.y and my <= self.y + self.h then
 		self.isHovering = true
 		if love.keyboard.isDown("lalt") then
-			self.w = CARD_WIDTH * 1.5
-			self.h = CARD_HEIGHT * 1.5
-			self.x = self.base_x - (CARD_WIDTH * 0.1)
-			self.y = self.base_y - (CARD_HEIGHT * 0.1) - 160
+			self.w = const.HAND_CARD_ZOOM_WIDTH
+			self.h = const.HAND_CARD_ZOOM_HEIGHT
+      self.x = const.HAND_CARD_ZOOM_X
+			self.y = const.HAND_CARD_ZOOM_Y
 		else
-			self.w = CARD_WIDTH
-			self.h = CARD_HEIGHT
-			self.x = self.base_x
-			self.y = self.base_y
+			self.w = const.HAND_CARD_WIDTH
+			self.h = const.HAND_CARD_HEIGHT
+			self.x = const.HAND_CARD_ORIGIN_X
+			self.y = const.HAND_CARD_ORIGIN_Y
 		end
 	else
 		self.isHovering = false
-		self.w = CARD_WIDTH
-		self.h = CARD_HEIGHT
-		self.x = self.base_x
-		self.y = self.base_y
+		self.w = const.HAND_CARD_WIDTH
+		self.h = const.HAND_CARD_HEIGHT
+		self.x = const.HAND_CARD_ORIGIN_X
+		self.y = const.HAND_CARD_ORIGIN_Y
 	end
 end
 
@@ -149,7 +155,7 @@ end
 
 ---comment
 ---@param img love.Image
-function Card:draw_to_screen(img)
+function Card:draw_to_screen(img, offset)
 	love.graphics.setColor(1, 1, 1, 1)
   local img_w, img_h = img:getDimensions()
   self.scaleX = self.w/img_w

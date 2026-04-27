@@ -1,11 +1,18 @@
+print(love.window.getDPIScale())
+os.exit()
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
 
+---@module "utils.constants"
+local const = require("utils.constants")
+
 ---@module "entities.card"
 local Card = require("entities.card")
-
 ---@type Card
 local Card_1
+---@module "entities.card"
+---@type Card
+local Card_2
 
 HALF_SCREEN_X = 960
 HALF_SCREEN_Y = 840
@@ -13,7 +20,7 @@ local CARD_WIDTH = 200
 local CARD_HEIGHT = CARD_WIDTH * (3.5 / 2.5) -- Results in 280
 
 function love.load()
-	love.window.setMode(1920, 1080, { fullscreen = true, fullscreentype = "exclusive" })
+	love.window.setMode(const.SCREEN_WIDTH, const.SCREEN_HEIGHT, { fullscreen = true, fullscreentype = "exclusive" })
 	Mat = love.graphics.newImage(gameboard.playmat_image)
 	local mat_w, mat_h = Mat:getDimensions()
 	Mat_scaleX = gameboard.size.w / mat_w
@@ -21,12 +28,18 @@ function love.load()
 	Card_1 = Card.new( "test", 1, 1,
 		nil, "CREATURE", "test_00",
 		1, {}, nil, nil, nil, nil,
-		"Hand", 960, 840)
+		"Hand", 1360, 840)
   CARD_1_IMG = love.graphics.newImage(Card_1:load())
+	Card_2 = Card.new( "test", 1, 1,
+		nil, "CREATURE", "test_00",
+		1, {}, nil, nil, nil, nil,
+		"Hand", 1160, 840)
+  CARD_2_IMG = love.graphics.newImage("assets/images/disa.png")
 end
 
 function love.update(dt)
   Card_1:update(dt)
+  Card_2:update(dt)
 end
 
 function love.draw(dt)
@@ -37,6 +50,7 @@ function love.draw(dt)
 	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
 
   Card_1:draw_to_screen(CARD_1_IMG)
+  Card_2:draw_to_screen(CARD_2_IMG)
 end
 
 --increment the color of an object
