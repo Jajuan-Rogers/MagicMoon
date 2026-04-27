@@ -1,17 +1,10 @@
 local request = require("http.request")
 local cjson = require("cjson")
 
----@class Cards
+
 ---@field card table[Card]
 
---- @class Card
---- @field id string
---- @field name string|table
---- @field mana string
---- @field image string
---- @field type string
 
-local card = {}
 
 --- @class Deck
 --- @field owner string

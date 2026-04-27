@@ -1,6 +1,12 @@
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
 
+---@module "entities.card"
+local Card = require("entities.card")
+
+---@type Card
+local Card_1
+
 HALF_SCREEN_X = 960
 HALF_SCREEN_Y = 840
 local CARD_WIDTH = 200
@@ -12,9 +18,15 @@ function love.load()
 	local mat_w, mat_h = Mat:getDimensions()
 	Mat_scaleX = gameboard.size.w / mat_w
 	Mat_scaleY = gameboard.size.h / mat_h
+	Card_1 = Card.new( "test", 1, 1,
+		nil, "CREATURE", "test_00",
+		1, {}, nil, nil, nil, nil,
+		"Hand", 960, 840)
 end
 
-function love.update(dt) end
+function love.update(dt)
+  Card_1:update(dt)
+end
 
 function love.draw(dt)
 	local count = 0
@@ -23,17 +35,8 @@ function love.draw(dt)
 	love.graphics.rectangle("line", gameboard.size.x, gameboard.size.y, gameboard.size.w, gameboard.size.h)
 	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
 
-	for i = 1, 8 do
-		love.graphics.setColor(3 / 255, 49 / 255, 140 / 255, 1)
-		love.graphics.rectangle("fill", HALF_SCREEN_X + count, HALF_SCREEN_Y, CARD_WIDTH, CARD_HEIGHT)
-		love.graphics.setLineWidth(3)
-		love.graphics.setColor(0, 0, 0, 1)
-		love.graphics.rectangle("line", HALF_SCREEN_X + count, HALF_SCREEN_Y, CARD_WIDTH, CARD_HEIGHT)
-		love.graphics.setLineWidth(1)
-		count = count + 90
-	end
+  Card_1:draw_to_screen()
 end
-
 
 --increment the color of an object
 --@param channel ColorChannel
