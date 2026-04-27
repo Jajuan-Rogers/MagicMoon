@@ -1,16 +1,26 @@
-print(love.window.getDPIScale())
+require("paths")
+
+---@module "cjson"
+local cjson = require("cjson")
+
+---@module "entities.deck"
+local Deck = require("entities.deck")
+
+local deck = Deck
+deck.new("jay", "test_files/blood_rites.json")
 os.exit()
+
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
 
 ---@module "utils.constants"
 local const = require("utils.constants")
 
----@module "entities.card"
 local Card = require("entities.card")
+
 ---@type Card
 local Card_1
----@module "entities.card"
+
 ---@type Card
 local Card_2
 
@@ -25,21 +35,17 @@ function love.load()
 	local mat_w, mat_h = Mat:getDimensions()
 	Mat_scaleX = gameboard.size.w / mat_w
 	Mat_scaleY = gameboard.size.h / mat_h
-	Card_1 = Card.new( "test", 1, 1,
-		nil, "CREATURE", "test_00",
-		1, {}, nil, nil, nil, nil,
-		"Hand", 1360, 840)
-  CARD_1_IMG = love.graphics.newImage(Card_1:load())
-	Card_2 = Card.new( "test", 1, 1,
-		nil, "CREATURE", "test_00",
-		1, {}, nil, nil, nil, nil,
-		"Hand", 1160, 840)
-  CARD_2_IMG = love.graphics.newImage("assets/images/disa.png")
+
+	Card_1 = Card.new("test", 1, 1, nil, "CREATURE", "test_00", 1, {}, nil, nil, nil, nil, "Hand", 1360, 840)
+	CARD_1_IMG = love.graphics.newImage(Card_1:load())
+
+	Card_2 = Card.new("test", 1, 1, nil, "CREATURE", "test_00", 1, {}, nil, nil, nil, nil, "Hand", 1160, 840)
+	CARD_2_IMG = love.graphics.newImage("assets/images/disa.png")
 end
 
 function love.update(dt)
-  Card_1:update(dt)
-  Card_2:update(dt)
+	Card_1:update(dt)
+	Card_2:update(dt)
 end
 
 function love.draw(dt)
@@ -49,8 +55,8 @@ function love.draw(dt)
 	love.graphics.rectangle("line", gameboard.size.x, gameboard.size.y, gameboard.size.w, gameboard.size.h)
 	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
 
-  Card_1:draw_to_screen(CARD_1_IMG)
-  Card_2:draw_to_screen(CARD_2_IMG)
+	Card_1:draw_to_screen(CARD_1_IMG)
+	Card_2:draw_to_screen(CARD_2_IMG)
 end
 
 --increment the color of an object

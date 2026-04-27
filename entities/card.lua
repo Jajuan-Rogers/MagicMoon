@@ -2,6 +2,26 @@
 local const = require("utils.constants")
 
 
+---@class Card
+---@field name string
+---@field power? number
+---@field toughness? number
+---@field counters? PTCounter|nil
+---@field card_type CardType
+---@field scryfall_id string
+---@field eid number --entity id
+---@field cmc Mana[]
+---@field image_link string
+---@field image_fp? string|nil
+---@field oracle_text string
+---@field type_line string
+---@field location? GameLocations
+---@field x number
+---@field y number
+---@field w number
+---@field h number
+
+---@class Card
 local Card = {}
 Card.__index = Card
 
@@ -56,26 +76,7 @@ local GameLocations = {
 ---@field set string
 ---@field set_name string
 
----@class Card
----@field name string
----@field power? number
----@field toughness? number
----@field counters? PTCounter|nil
----@field card_type CardType
----@field scryfall_id string
----@field eid number --entity id
----@field cmc Mana[]
----@field image_link string
----@field image_fp? string|nil
----@field oracle_text string
----@field type_line string
----@field location? GameLocations
----@field x number
----@field y number
----@field w number
----@field h number
 
----@class Card
 function Card.new(
 	name,
 	power,
@@ -147,6 +148,7 @@ function Card:update(dt)
 		self.y = const.HAND_CARD_ORIGIN_Y
 	end
 end
+
 
 function Card:load()
 	self.image_fp = "assets/images/black_lotus.png"

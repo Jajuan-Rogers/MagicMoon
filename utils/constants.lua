@@ -14,4 +14,6 @@ const.HAND_CARD_ZOOM_HEIGHT = const.HAND_CARD_HEIGHT * 1.5
 const.HAND_CARD_ZOOM_X = (const.HAND_CARD_WIDTH * 0.1)
 const.HAND_CARD_ZOOM_Y = (const.HAND_CARD_HEIGHT * 0.1) - 160
 
+---color constants
+
 return const

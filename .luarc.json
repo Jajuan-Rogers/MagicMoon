@@ -5,15 +5,18 @@
     ],
     "Lua.workspace.library": [
         "~/.local/share/love-api",
-        "/home/youruser/.luarocks/share/lua/5.5",
         "${3rd}/love2d/library"
     ],
     "Lua.workspace.checkThirdParty": false,
     "Lua.completion.callSnippet": "Replace",
     "Lua.runtime.path": [
-    "?.lua",
-    "?/init.lua",
-    "/home/youruser/.luarocks/share/lua/5.4/?.lua",
-    "/home/youruser/.luarocks/share/lua/5.4/?/init.lua"
-  ]
+        "?.lua",
+        "?/init.lua",
+        "./entities",
+        "entities/?.lua",        
+        "entities/?/init.lua",
+        "./lua_modules/share/lua/5.4/?.lua",
+        "./lua_modules/share/lua/5.4/?/init.lua",
+        "src/?.lua" 
+    ]
 }
