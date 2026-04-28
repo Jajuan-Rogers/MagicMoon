@@ -6,9 +6,9 @@ local json = require("cjson")
 
 local M = {}
 
----@param link string
+---@param deck_url string
 function M.parse_deck_link(deck_url)
-	local deck_id = link:match("/decks/([%w%-_]+)")
+	local deck_id = deck_url:match("/decks/([%w%-_]+)")
 	return deck_id
 end
 
@@ -18,15 +18,23 @@ function M.fetch_moxfield_deck(deck_url)
 		return nil, "deck id was not found in Moxfield link !"
 	end
 
-	local api_url = "https:://api.moxfield.com/v2/decks/all" .. deck_id
+	local api_url = "https://api2.moxfield.com/v2/decks/all" .. deck_id .. "/export"
 	local response = {}
 
 	local _, code = https.request({
 		url = api_url,
 		method = "GET",
+    protocol = "tlsv1_3",
 		headers = {
-			["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-			["Accept"] = "application/json",
+			["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+			["Accept"] = "application/json, text/plain, */*",
+			["Accept-Language"] = "en-US,en;q=0.9",
+			["Sec-Fetch-Dest"] = "empty",
+			["Sec-Fetch-Mode"] = "cors",
+			["Sec-Fetch-Site"] = "same-site",
+			["Referer"] = "https://www.moxfield.com/",
+			["Origin"] = "https://www.moxfield.com",
+			["Connection"] = "keep-alive",
 		},
 
 		sink = ltn12.sink.table(response),
@@ -64,7 +72,7 @@ function M.read_txt_deck_file(fp)
 	for line in f:lines() do
 		line = line:match("^%s*(.-)%s*$")
 
-		local qty, name = line:match("^(%d+)%s+(.+)$")
+		local _, name = line:match("^(%d+)%s+(.+)$")
 
 		if name then
 			table.insert(deck_list.identifiers, { name = name })
@@ -88,15 +96,15 @@ function M.fetch_scryfall_deck(txt_fp)
 	end
 
 	local all_ids = deck_data.identifiers
-	local chunk_1 = { identifiers = table.move(deck_data.identifiers, 1, 75, 1, {}) }
-	local chunk_2 = { identifiers = table.move(all_ids, 76, #all_ids, 1, {}) }
-	local chunks = { chunk_1, chunk_2 }
+	local batch_1 = { identifiers = table.move(deck_data.identifiers, 1, 75, 1, {}) }
+	local batch_2 = { identifiers = table.move(all_ids, 76, #all_ids, 1, {}) }
+	local batch = { batch_1, batch_2 }
 
 	local final_data
-	for i = 1, #chunks do
-		local request_body = json.encode(chunks[i])
+	for i = 1, #batch do
+		local request_body = json.encode(batch[i])
 		local response_chunks = {}
-		local r, code, headers, status = https.request({
+		local r, code, _, status = https.request({
 			url = api_url,
 			method = "POST",
 			headers = {
@@ -116,23 +124,14 @@ function M.fetch_scryfall_deck(txt_fp)
 			print("ERROR: ", tostring(code), r, tostring(status))
 			print(table.concat(response_chunks))
 		end
-    if i == 1 then
-      chunk_1 = final_data
-    else
-      chunk_2 = final_data
-    end
+		if i == 1 then
+			batch_1 = final_data.data
+		else
+			batch_2 = final_data.data
+		end
 	end
-	final_data = table.move(chunks[2], 1, #chunks[2], #chunks[1] + 1, chunk_1)
-
-	for k, v in pairs(final_data.data) do
-		print(k, v.name)
-	end
-	os.exit()
+	final_data = table.move(batch_2, 1, #batch_2, (#batch_1 + 1), batch_1)
 	return final_data
 end
 
-local d = M.fetch_scryfall_deck("test_files/blood_rites.txt")
-
-for a, b in pairs(d.data) do
-	print(a, b.name, b.set, b.finish)
-end
+return M

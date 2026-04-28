@@ -2,15 +2,23 @@ local deck = require("./deck.lua")
 
 ---@class Player
 ---@field name string
----@field turn number
----@field deck_name string
----@field deck Deck
----@field commander Card
----@field Hand table[Card]
+---@field turn? number
+---@field deck_name? string
+---@field deck? Deck
+---@field commander? Card
+---@field Hand? table[Card]
 
 
-
+---@class Player
 local Player = {}
+Player.__index = Player
+
+
+function Player.new(name)
+  local self = setmetatable({}, Player)
+  self.name = name or "player_"..math.random()
+  
+end
 
 function Player.draw_card() end
 
