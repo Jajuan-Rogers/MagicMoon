@@ -11,7 +11,7 @@ function M.parse_deck_link(deck_url)
 	local deck_id = deck_url:match("/decks/([%w%-_]+)")
 	return deck_id
 end
-
+---@deprecated
 function M.fetch_moxfield_deck(deck_url)
 	local deck_id = M.parse_deck_link(deck_url)
 	if not deck_id then
@@ -86,7 +86,7 @@ end
 
 ---get deck from scryfall given a txt file
 ---@param txt_fp string
----@return table|nil
+---@return Card[]|nil
 function M.fetch_scryfall_deck(txt_fp)
 	local api_url = "https://api.scryfall.com/cards/collection"
 	local deck_data = M.read_txt_deck_file(txt_fp)
@@ -133,5 +133,10 @@ function M.fetch_scryfall_deck(txt_fp)
 	final_data = table.move(batch_2, 1, #batch_2, (#batch_1 + 1), batch_1)
 	return final_data
 end
+
+-- local d = M.fetch_scryfall_deck("test_files/blood_rites.txt")
+-- for k,v in pairs(d) do
+--   print(k,v)
+-- end
 
 return M

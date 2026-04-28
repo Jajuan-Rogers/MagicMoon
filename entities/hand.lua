@@ -8,6 +8,7 @@ local const = require("utils.constants")
 local card = require("entities.card")
 
 ---@class Hand
+---@field owner string
 ---@field cards? Card[]
 ---@field deck Card[] 
 ---@field current_card_offset number
@@ -17,7 +18,12 @@ local Hand = {}
 Hand.__index = Hand
 
 
-function Hand.new(deck, offset, cards)
+---create hand object, (THIS MUST ALWAYS BE CREATED AFTER PLAYER
+---AND IMMEDIATELY CONNECTED TO A PLAYER !)
+---@param cards Card[]
+---@param owner string
+---@return Hand
+function Hand.new(deck, offset, cards, owner)
 	local self = setmetatable({}, Hand)
   self.deck = deck.new()
   self.current_card_offset = offset or 0
@@ -29,16 +35,13 @@ end
 function Hand:update()
 end
 
-
-function Hand:decrease_card_offset()
-  self.current_card_offset = self.current_card_offset - const.HAND_CARD_OFFSET_X
+function Hand:draw_card()
 end
 
-function Hand:increase_card_offset()
+function Hand:discard_card()
   self.current_card_offset = self.current_card_offset + const.HAND_CARD_OFFSET_X
 end
 
 function Hand:draw()
-  self.cards
 end
 

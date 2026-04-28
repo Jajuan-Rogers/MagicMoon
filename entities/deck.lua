@@ -3,16 +3,17 @@ require("paths")
 local request = require("utils.request")
 local Player = require("entities.player")
 
-
 ---@module "cjson"
 local cjson = require("cjson")
 
 --- @class Deck
 --- @field owner Player
 --- @field deck_fp string
---- @field commander? Card
---- @field count? number
---- @field cards? Card[]
+--- @field commander? Card|Card<Card,Card>
+--- @field library Card[]
+--- @field graveyard? Card[]
+--- @field exiled? Card[]
+--- @field tokens? Card[]
 --- @field card_sleeve_img love.Image
 
 ---@class Deck
@@ -31,17 +32,36 @@ function Deck.new(owner, deck_fp)
 	else
 		if deck_fp:find("json") ~= nil then
 			self.deck_fp = deck_fp
-      -- request.fetch_scryfall_deck(deck_fp)
+		  local cards = request.fetch_scryfall_deck(deck_fp)
+      if cards == nil then
+        return
+      end
+      self.library = table.move(a1, f, e, t, a2?)cards
 		end
 	end
 end
 
-function Deck:json_to_deck()
-end
 
 function Deck:mullagain() end
 
 function Deck:shuffle() end
+
+---search for a specific card or card type then shuffle
+---@param card_type any
+function Deck:search_and_shuffle(card_type) end
+
+---search for a card, no post shuffle
+---@param card_type any
+function Deck:search(card_type) end
+
+---put the given card back in library at random
+---@param card any
+function Deck:place_at_random(card) end
+
+---put the given card(s) at the bottom of library
+function Deck:put_at_bottom(card) end
+
+
 
 local d = Deck
 

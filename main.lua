@@ -29,6 +29,7 @@ function love.load()
 	Mat_scaleX = gameboard.size.w / mat_w
 	Mat_scaleY = gameboard.size.h / mat_h
 
+
 	Card_1 = Card.new("test", 1, 1, nil, "CREATURE", "test_00", 1, {}, nil, nil, nil, nil, "Hand", 1360, 840)
 	CARD_1_IMG = love.graphics.newImage(Card_1:load())
 
