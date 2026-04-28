@@ -31,7 +31,7 @@ function Deck.new(owner, deck_fp)
 	else
 		if deck_fp:find("json") ~= nil then
 			self.deck_fp = deck_fp
-      request.fetch_scryfall_deck(deck_fp)
+      -- request.fetch_scryfall_deck(deck_fp)
 		end
 	end
 end
@@ -45,8 +45,8 @@ function Deck:shuffle() end
 
 local d = Deck
 
-local p = Player.new
+local p = Player.new("jay")
 
-d.new("jay", "test_files/blood_rites.json")
+d.new(p, "test_files/blood_rites.json")
 
 return Deck

@@ -19,7 +19,7 @@ local const = require("utils.constants")
 local GameBoard = {
   bg_color= {3,49,140,1},
   playmat_image= "assets/images/default_playmat.jpg",
-	size = { x=830, y=30, w=const.SCREEN_WIDTH-830, h=const.SCREEN_HEIGHT-30}
+	size = { x=const.GAMEBOARD_X, y=const.GAMEBOARD_Y, w=const.SCREEN_WIDTH, h=const.SCREEN_HEIGHT}
 }
 
 ---get the gameboard obj to draw onto the screen

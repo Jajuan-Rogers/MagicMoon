@@ -1,6 +1,6 @@
 rock_manifest = {
    lib = {
-      ["ssl.so"] = "78872af56c37240b21f6eb0765f583e8"
+      ["ssl.so"] = "a9584d1f6e6407d449a7c241ba1aa8fc"
    },
    lua = {
       ssl = {

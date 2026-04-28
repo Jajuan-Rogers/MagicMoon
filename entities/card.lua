@@ -109,8 +109,6 @@ function Card.new(
 	self.oracle_text = oracle_text
 	self.type_line = type_line
 	self.location = location
-	self.base_x = x
-	self.base_y = y
 	self.x = x
 	self.y = y
 	self.w = const.HAND_CARD_WIDTH
@@ -138,7 +136,7 @@ function Card:update(dt)
 			self.w = const.HAND_CARD_WIDTH
 			self.h = const.HAND_CARD_HEIGHT
 			self.x = const.HAND_CARD_ORIGIN_X
-			self.y = const.HAND_CARD_ORIGIN_Y
+			self.y = const.HAND_CARD_ORIGIN_Y - (const.SCREEN_HEIGHT*dt)
 		end
 	else
 		self.isHovering = false

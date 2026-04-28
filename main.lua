@@ -1,12 +1,7 @@
 require("paths")
 
-
 ---@module "entities.deck"
 local Deck = require("entities.deck")
-
-local deck = Deck
-deck.new("jay", "test_files/blood_rites.json")
-os.exit()
 
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
