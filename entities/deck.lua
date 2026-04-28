@@ -1,8 +1,9 @@
----@module "cjson"
 require("paths")
-local https = require("ssl.https")
-local cjson = require("cjson")
 
+
+
+---@module "cjson"
+local cjson = require("cjson")
 
 --- @class Deck
 --- @field owner Player

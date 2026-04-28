@@ -1,3 +1,0 @@
-#!/bin/sh
-
-LUAROCKS_SYSCONFDIR='/etc/luarocks' exec '/usr/bin/lua5.1' -e 'package.path="/home/benten/projects/programming/lua/games/MagicMoon/lua_modules/share/lua/5.1/?.lua;/home/benten/projects/programming/lua/games/MagicMoon/lua_modules/share/lua/5.1/?/init.lua;"..package.path;package.cpath="/home/benten/projects/programming/lua/games/MagicMoon/lua_modules/lib/lua/5.1/?.so;"..package.cpath;local k,l,_=pcall(require,"luarocks.loader") _=k and l.add_context("lua-cjson","2.1.0.10-1")' '/home/benten/projects/programming/lua/games/MagicMoon/lua_modules/lib/luarocks/rocks-5.1/lua-cjson/2.1.0.10-1/bin/json2lua' "$@"

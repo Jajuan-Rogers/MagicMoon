@@ -1,7 +1,5 @@
 require("paths")
 
----@module "cjson"
-local cjson = require("cjson")
 
 ---@module "entities.deck"
 local Deck = require("entities.deck")

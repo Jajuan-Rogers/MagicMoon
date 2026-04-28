@@ -1,5 +1,6 @@
 -- paths.lua
-local version = _VERSION:match("%d+%.%d+") or "5.4"
+local version = _VERSION:match("%d+%.%d+") or "5.1"
+
 
 -- Add the local lua_modules folder to the search paths
 package.path = package.path .. ";./lua_modules/share/lua/" .. version .. "/?.lua"
