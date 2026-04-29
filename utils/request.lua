@@ -301,8 +301,8 @@ function M.adjust_card_tables(cards)
 	end
 end
 
-local d, e = M.fetch_scryfall_deck("test_files/restless_mox.txt")
-M.adjust_card_tables(d)
+-- local d, e = M.fetch_scryfall_deck("test_files/restless_mox.txt")
+-- M.adjust_card_tables(d)
 -- 	print(e)
 -- end
 -- for k, v in pairs(d) do

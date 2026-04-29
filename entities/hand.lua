@@ -35,6 +35,7 @@ end
 ---add card to hand
 ---@param card Card
 function Hand:add_card(card)
+  print("added "..card.name)
   self.cards[card.name] = card
   self.cards[card.name].offset = const.HAND_CARD_OFFSET_X
 end

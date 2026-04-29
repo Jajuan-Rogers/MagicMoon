@@ -14,12 +14,14 @@ local const = require("utils.constants")
 
 ---@type Player
 local player_1 = Player.new("jay")
+local player_2 = Player.new("ben")
 
 ---@type Player[]
 local players = {}
 local cardImages = {}
 
 table.insert(players, player_1)
+table.insert(players, player_2)
 
 function love.load()
 	love.window.setMode(const.SCREEN_WIDTH, const.SCREEN_HEIGHT, { fullscreen = true, fullscreentype = "exclusive" })
@@ -30,6 +32,7 @@ function love.load()
 
 	for p = 1, #players do
 		local player = players[p]
+    print("making image for: ")
 		local cards = player.hand.cards
 		for c = 1, #cards do
 			local card = cards[c]
@@ -42,11 +45,19 @@ end
 function love.update(dt) end
 
 function love.draw(dt)
-	love.graphics.setBackgroundColor(gameboard.bg_color)
+	love.graphics.setBackgroundColor(1,1,11,1)
 	love.graphics.rectangle("line", const.GAMEBOARD_X, const.GAMEBOARD_Y, const.GAMEBOARD_WIDTH, const.GAMEBOARD_HEIGHT)
 	love.graphics.draw(Mat, const.GAMEBOARD_X, const.GAMEBOARD_Y, 0, Mat_scaleX, Mat_scaleY)
 	for i, c in ipairs(cardImages) do
-		love.graphics.draw(cardImages[i], const.HAND_CARD_ORIGIN_X, const.HAND_CARD_ORIGIN_Y, 0)
+		love.graphics.draw(
+			c,
+			const.HAND_CARD_ORIGIN_X,
+			const.HAND_CARD_ORIGIN_Y,
+			0,
+			const.GAMEBOARD_WIDTH,
+			const.HAND_CARD_HEIGHT
+		)
+    print("drawing ", cardImages[i])
 	end
 end
 

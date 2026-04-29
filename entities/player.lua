@@ -19,15 +19,24 @@ Player.__index = Player
 function Player.new(name)
 	local self = setmetatable({}, Player)
 	self.name = name or ("player_" .. math.random(1000))
-  local deck =  Deck.new(self,"test_files/restless_scryfall.txt")
-  self.deck = deck
-  self.hand = Hand.new()
-  return self
+	self.deck = Deck.new(self, "test_files/restless_scryfall.txt")
+	self.hand = Hand.new()
+  for k,v in pairs(self.deck) do
+    if k == "library" then
+    print(k,v.cards)
+  end
+end
+  os.exit()
+	-- for _ = 1, 7 do
+	-- 	self.draw_card(self)
+	-- end
+	return self
 end
 
 function Player:draw_card()
-  local rng = math.random(100)
-  self.hand.add_card(self, self.deck[rng])
+	local rng = math.random(100)
+  os.exit()
+	self.hand.add_card(self, self.deck[rng])
 end
 
 ---@param n number
