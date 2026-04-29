@@ -1,3 +1,96 @@
+---@class ScryfallCard
+---@field object string
+---@field id string
+---@field oracle_id string
+---@field multiverse_ids integer[]
+---@field mtgo_id integer|nil
+---@field arena_id integer|nil
+---@field tcgplayer_id integer|nil
+---@field cardmarket_id integer|nil
+---@field name string
+---@field lang string
+---@field released_at string
+---@field uri string
+---@field scryfall_uri string
+---@field layout string
+---@field highres_image boolean
+---@field image_status string
+---@field image_uris table<string,string>|nil
+---@field mana_cost string
+---@field cmc number
+---@field type_line string
+---@field oracle_text string|nil
+---@field power string|nil
+---@field toughness string|nil
+---@field loyalty string|nil
+---@field defense string|nil
+---@field colors string[]
+---@field color_identity string[]
+---@field keywords string[]
+---@field legalities table<string,string>
+---@field games string[]
+---@field reserved boolean
+---@field foil boolean
+---@field nonfoil boolean
+---@field finishes string[]
+---@field oversized boolean
+---@field promo boolean
+---@field reprint boolean
+---@field variation boolean
+---@field set_id string
+---@field set string
+---@field set_name string
+---@field set_type string
+---@field set_uri string
+---@field set_search_uri string
+---@field scryfall_set_uri string
+---@field rulings_uri string
+---@field prints_search_uri string
+---@field collector_number string
+---@field digital boolean
+---@field rarity string
+---@field flavor_text string|nil
+---@field card_back_id string
+---@field artist string|nil
+---@field artist_ids string[]|nil
+---@field illustration_id string|nil
+---@field border_color string
+---@field frame string
+---@field frame_effects string[]|nil
+---@field security_stamp string|nil
+---@field full_art boolean
+---@field textless boolean
+---@field booster boolean
+---@field story_spotlight boolean
+---@field edhrec_rank integer|nil
+---@field penny_rank integer|nil
+---@field prices table<string,string|nil>
+---@field related_uris table<string,string>|nil
+---@field purchase_uris table<string,string>|nil
+---@field card_faces ScryfallCardFace[]|nil
+---@field all_parts table[]|nil
+---@field preview table|nil
+---@field produced_mana string[]|nil
+---@field watermark string|nil
+---@field promo_types string[]|nil
+---@field variation_of string|nil
+---@field life_modifier string|nil
+---@field hand_modifier string|nil
+
+---@class ScryfallCardFace
+---@field name string
+---@field mana_cost string|nil
+---@field type_line string|nil
+---@field oracle_text string|nil
+---@field colors string[]|nil
+---@field power string|nil
+---@field toughness string|nil
+---@field loyalty string|nil
+---@field defense string|nil
+---@field flavor_text string|nil
+---@field artist string|nil
+---@field image_uris table<string,string>|nil
+
 require("paths")
 
 local https = require("ssl.https")
@@ -147,12 +240,11 @@ function M.fetch_scryfall_deck(txt_fp)
 		else
 			print("ERROR: ", tostring(code), r, tostring(status))
 			print(table.concat(response_chunks))
-      if i == 1 then
-        print("This error occured while requesting api for 'batch_1' cards")
-      else
-
-        print("This error occured while requesting api for 'batch_2' cards")
-      end
+			if i == 1 then
+				print("This error occured while requesting api for 'batch_1' cards")
+			else
+				print("This error occured while requesting api for 'batch_2' cards")
+			end
 		end
 		if i == 1 then
 			batch_1 = final_data.data
@@ -164,20 +256,62 @@ function M.fetch_scryfall_deck(txt_fp)
 	final_data.commander = commander
 	return final_data
 end
---
--- local d,e = M.fetch_scryfall_deck("test_files/restless_mox.txt")
--- if d == nil then
---   print(e)
+
+---get a card given its name and other optional arguments
+---if you do give the other optional arguments the lieklyhood
+---of that card being found decreases unless you're certain a
+---card of that name, set_id, collection number and printing
+---actually exist in the scyfall database
+---@param name any
+---@param set_id? string
+---@param collection_num? string
+---@param foil? boolean
+function M.card_image_from_name(name, set_id, collection_num, foil) end
+
+function M.card_image_from_uri(uri) end
+
+---scryfall gives a lot of information with each card that we will not
+---be using in the game so here is where we will make a new table with
+---all cards from the loaded deck and only attach the information we need
+--- - name
+--- - image_type
+--- - image_uri
+--- - card_faces
+--- - rullings_uri
+--- - scryfall_uri
+--- - uri
+---@param cards ScryfallCard[]
+---@return table
+function M.adjust_card_tables(cards)
+	local nt = {}
+	nt.cards = {}
+	for i, c in ipairs(cards) do
+		local card = {}
+		card.name = c.name
+		if c.card_faces ~= nil then
+			local faces = c.card_faces
+			---@cast faces ScryfallCardFace
+			card.multi_faced = true
+      card.faces = {}
+			for k,face in ipairs(faces) do
+        card.faces[k] = face
+        print(k, face.name)
+			end
+		end
+	end
+end
+
+local d, e = M.fetch_scryfall_deck("test_files/restless_mox.txt")
+M.adjust_card_tables(d)
+-- 	print(e)
 -- end
--- for k,v in pairs(d) do
---   print(d[104].set_name)
---   os.exit()
---   if k == "commander" then
---     print("THE DECKS COMMANDER IS: "..v)
---     goto continue
---   end
---   print(k, v)
---     ::continue::
+-- for k, v in pairs(d) do
+-- 	if v.card_faces ~= nil then
+-- 		for face = 1, #v.card_faces do
+-- 			print(v.card_faces[face].name)
+-- 			print(v.card_faces[face].image_uris.png)
+-- 		end
+-- 	end
 -- end
 --
 return M

@@ -7,7 +7,7 @@ local const = require("utils.constants")
 ---@field position number
 ---@field card_type CardType
 ---@field eid number --entity id
----@field image_fp? string|nil
+---@field image_fp string
 ---@field type_line string
 ---@field location? GameLocations
 ---@field x number
@@ -45,6 +45,10 @@ local GameLocations = {
 ---@field foil boolean
 ---@field set string
 ---@field set_name string
+---
+
+
+
 
 function Card.new(
 	name,
@@ -115,5 +119,11 @@ function Card:draw_to_screen(img, offset)
 	self.scaleY = self.h / img_h
 	love.graphics.draw(img, self.x, self.y, 0, self.scaleX, self.scaleY)
 end
+
+
+function Card:set_offset(offset)
+end
+
+
 
 return Card

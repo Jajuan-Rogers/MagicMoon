@@ -1,53 +1,53 @@
 require("paths")
 
----@module "entities.deck"
-local Deck = require("entities.deck")
+---@module "entities.player"
+local Player = require("entities.player")
 
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
 
 ---@module "utils.constants"
-local const = require("utils.constants")
-
 local Card = require("entities.card")
 
----@type Card
-local Card_1
+---@module "utils.constants"
+local const = require("utils.constants")
 
----@type Card
-local Card_2
+---@type Player
+local player_1 = Player.new("jay")
 
-HALF_SCREEN_X = 960
-HALF_SCREEN_Y = 840
-local CARD_WIDTH = 200
-local CARD_HEIGHT = CARD_WIDTH * (3.5 / 2.5) -- Results in 280
+---@type Player[]
+local players = {}
+local cardImages = {}
+
+table.insert(players, player_1)
 
 function love.load()
 	love.window.setMode(const.SCREEN_WIDTH, const.SCREEN_HEIGHT, { fullscreen = true, fullscreentype = "exclusive" })
 	Mat = love.graphics.newImage(gameboard.playmat_image)
 	local mat_w, mat_h = Mat:getDimensions()
-	Mat_scaleX = gameboard.size.w / mat_w
-	Mat_scaleY = gameboard.size.h / mat_h
+	Mat_scaleX = const.GAMEBOARD_WIDTH / mat_w
+	Mat_scaleY = const.GAMEBOARD_HEIGHT / mat_h
 
-
-	Card_1 = Card.new("test_1", "CREATURE", "test_00","","", "HAND",660, 840)
-	CARD_1_IMG = love.graphics.newImage("assets/images/black_lotus.png")
+	for p = 1, #players do
+		local player = players[p]
+		local cards = player.hand.cards
+		for c = 1, #cards do
+			local card = cards[c]
+			cardImages[card.name] = love.graphics.newImage(cards[card].image_fp)
+			print("image for: " .. card.name .. " loaded")
+		end
+	end
 end
 
-function love.update(dt)
-	Card_1:update(dt)
-	-- Card_2:update(dt)
-end
+function love.update(dt) end
 
 function love.draw(dt)
-	local count = 0
-	local rotation = 3
-	love.graphics.setColor(gameboard.bg_color)
-	love.graphics.rectangle("line", gameboard.size.x, gameboard.size.y, gameboard.size.w, gameboard.size.h)
-	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
-
-	Card_1:draw_to_screen(CARD_1_IMG)
-	-- Card_2:draw_to_screen(CARD_2_IMG)
+	love.graphics.setBackgroundColor(gameboard.bg_color)
+	love.graphics.rectangle("line", const.GAMEBOARD_X, const.GAMEBOARD_Y, const.GAMEBOARD_WIDTH, const.GAMEBOARD_HEIGHT)
+	love.graphics.draw(Mat, const.GAMEBOARD_X, const.GAMEBOARD_Y, 0, Mat_scaleX, Mat_scaleY)
+	for i, c in ipairs(cardImages) do
+		love.graphics.draw(cardImages[i], const.HAND_CARD_ORIGIN_X, const.HAND_CARD_ORIGIN_Y, 0)
+	end
 end
 
 --increment the color of an object
