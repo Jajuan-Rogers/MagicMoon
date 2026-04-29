@@ -6,11 +6,16 @@ local Player = require("entities.player")
 ---@module "cjson"
 local cjson = require("cjson")
 
+---@class Library
+---@field cards Card[]
+---@field commander Card
+---@field tokens Card[]|Card|nil
+
 --- @class Deck
 --- @field owner Player
 --- @field deck_fp string
 --- @field commander? Card|Card<Card,Card>
---- @field library Card[]
+--- @field library Library
 --- @field graveyard? Card[]
 --- @field exiled? Card[]
 --- @field tokens? Card[]
@@ -30,17 +35,24 @@ function Deck.new(owner, deck_fp)
 		---Note assert this return value to ensure its not true
 		return nil
 	else
-		if deck_fp:find("json") ~= nil then
+		if deck_fp:find("txt") ~= nil then
 			self.deck_fp = deck_fp
-		  local cards = request.fetch_scryfall_deck(deck_fp)
-      if cards == nil then
-        return
-      end
-      self.library = table.move(a1, f, e, t, a2?)cards
+		  self.library = request.fetch_scryfall_deck(deck_fp) or {}
+      if self.library == nil then return end
+      self.commander = self.library.commander
+    else
+      --- notification system here !
+      print(".TXT Files only !!")
+      os.exit()
 		end
 	end
+  return self
 end
 
+function Deck:initial_draw()
+
+  
+end
 
 function Deck:mullagain() end
 
@@ -67,6 +79,6 @@ local d = Deck
 
 local p = Player.new("jay")
 
-d.new(p, "test_files/blood_rites.json")
+d.new(p, "test_files/restless_scryfall.txt")
 
 return Deck

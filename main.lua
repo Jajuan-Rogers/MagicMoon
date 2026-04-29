@@ -30,16 +30,13 @@ function love.load()
 	Mat_scaleY = gameboard.size.h / mat_h
 
 
-	Card_1 = Card.new("test", 1, 1, nil, "CREATURE", "test_00", 1, {}, nil, nil, nil, nil, "Hand", 1360, 840)
-	CARD_1_IMG = love.graphics.newImage(Card_1:load())
-
-	Card_2 = Card.new("test", 1, 1, nil, "CREATURE", "test_00", 1, {}, nil, nil, nil, nil, "Hand", 1160, 840)
-	CARD_2_IMG = love.graphics.newImage("assets/images/disa.png")
+	Card_1 = Card.new("test_1", "CREATURE", "test_00","","", "HAND",660, 840)
+	CARD_1_IMG = love.graphics.newImage("assets/images/black_lotus.png")
 end
 
 function love.update(dt)
 	Card_1:update(dt)
-	Card_2:update(dt)
+	-- Card_2:update(dt)
 end
 
 function love.draw(dt)
@@ -50,7 +47,7 @@ function love.draw(dt)
 	love.graphics.draw(Mat, gameboard.size.x, gameboard.size.y, 0, Mat_scaleX, Mat_scaleY)
 
 	Card_1:draw_to_screen(CARD_1_IMG)
-	Card_2:draw_to_screen(CARD_2_IMG)
+	-- Card_2:draw_to_screen(CARD_2_IMG)
 end
 
 --increment the color of an object

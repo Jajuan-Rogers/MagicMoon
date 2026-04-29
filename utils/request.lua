@@ -24,7 +24,7 @@ function M.fetch_moxfield_deck(deck_url)
 	local _, code = https.request({
 		url = api_url,
 		method = "GET",
-    protocol = "tlsv1_3",
+		protocol = "tlsv1_3",
 		headers = {
 			["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
 			["Accept"] = "application/json, text/plain, */*",
@@ -69,8 +69,23 @@ function M.read_txt_deck_file(fp)
 
 	local deck_list = { identifiers = {} }
 
+	local commander = nil
+	local on_commander_line = false
 	for line in f:lines() do
+		if on_commander_line then
+			line = line:match("^%s*(.-)%s*$")
+			commander = line
+			_, commander = line:match("^(%d+)%s+(.+)$")
+			on_commander_line = false
+			goto continue
+		end
+
 		line = line:match("^%s*(.-)%s*$")
+
+		if line == "Commander" or line == "// Commander" then
+			on_commander_line = true
+			goto continue
+		end
 
 		local _, name = line:match("^(%d+)%s+(.+)$")
 
@@ -79,20 +94,29 @@ function M.read_txt_deck_file(fp)
 		elseif #line > 0 then
 			table.insert(deck_list.identifiers, { name = line })
 		end
+
+		::continue::
 	end
 	f:close()
-	return deck_list
+	if commander == nil then
+		return nil
+	end
+	return deck_list, commander
 end
 
 ---get deck from scryfall given a txt file
 ---@param txt_fp string
----@return Card[]|nil
+---@return Card[]|nil cards
+---@return nil|string #error fetching api data or parsing card file or
+--- your commander was not found in file. If the commander was not found
+--- be sure to copy text if using **scryfall** or copy for Arena if using
+--- **moxfield**
 function M.fetch_scryfall_deck(txt_fp)
 	local api_url = "https://api.scryfall.com/cards/collection"
-	local deck_data = M.read_txt_deck_file(txt_fp)
+	local deck_data, commander = M.read_txt_deck_file(txt_fp)
 
 	if deck_data == nil then
-		return nil
+		return nil, "No commander found in deck !"
 	end
 
 	local all_ids = deck_data.identifiers
@@ -123,6 +147,12 @@ function M.fetch_scryfall_deck(txt_fp)
 		else
 			print("ERROR: ", tostring(code), r, tostring(status))
 			print(table.concat(response_chunks))
+      if i == 1 then
+        print("This error occured while requesting api for 'batch_1' cards")
+      else
+
+        print("This error occured while requesting api for 'batch_2' cards")
+      end
 		end
 		if i == 1 then
 			batch_1 = final_data.data
@@ -131,12 +161,23 @@ function M.fetch_scryfall_deck(txt_fp)
 		end
 	end
 	final_data = table.move(batch_2, 1, #batch_2, (#batch_1 + 1), batch_1)
+	final_data.commander = commander
 	return final_data
 end
-
--- local d = M.fetch_scryfall_deck("test_files/blood_rites.txt")
--- for k,v in pairs(d) do
---   print(k,v)
+--
+-- local d,e = M.fetch_scryfall_deck("test_files/restless_mox.txt")
+-- if d == nil then
+--   print(e)
 -- end
-
+-- for k,v in pairs(d) do
+--   print(d[104].set_name)
+--   os.exit()
+--   if k == "commander" then
+--     print("THE DECKS COMMANDER IS: "..v)
+--     goto continue
+--   end
+--   print(k, v)
+--     ::continue::
+-- end
+--
 return M
