@@ -14,11 +14,12 @@ local const = require("utils.constants")
 ---@field y number
 ---@field w number
 ---@field h number
+---@field bx number
+---@field by number
 
 ---@class Card
 local Card = {}
 Card.__index = Card
-
 
 ---@enum ManaColor
 ---@enum CardType
@@ -47,22 +48,10 @@ local GameLocations = {
 ---@field set_name string
 ---
 
-
-
-
-function Card.new(
-	name,
-  card,
-	eid,
-	card_png,
-	type_line,
-	location,
-	x,
-	y
-)
+function Card.new(name, card, eid, card_png, type_line, location, x, y, bx, by)
 	local self = setmetatable({}, Card)
 	self.name = name
-  self.card = card
+	self.card = card
 	self.eid = eid
 	self.card_png = card_png
 	self.type_line = type_line
@@ -71,6 +60,8 @@ function Card.new(
 	self.y = y
 	self.w = const.HAND_CARD_WIDTH
 	self.h = const.HAND_CARD_HEIGHT
+	self.bx = bx
+	self.by = by
 	return self
 end
 
@@ -87,7 +78,7 @@ function Card:update(dt)
 		if love.keyboard.isDown("lalt") then
 			self.w = const.HAND_CARD_ZOOM_WIDTH
 			self.h = const.HAND_CARD_ZOOM_HEIGHT
-			self.y = const.HAND_CARD_ZOOM_Y
+      self.y = const.HAND_CARD_ZOOM_Y
 		else
 			self.w = const.HAND_CARD_WIDTH + (const.HAND_CARD_WIDTH * 0.20)
 			self.h = const.HAND_CARD_HEIGHT + (const.HAND_CARD_HEIGHT * 0.20)
@@ -100,8 +91,8 @@ function Card:update(dt)
 		self.isHovering = false
 		self.w = const.HAND_CARD_WIDTH
 		self.h = const.HAND_CARD_HEIGHT
-		self.x = const.HAND_CARD_ORIGIN_X
-		self.y = const.HAND_CARD_ORIGIN_Y
+		self.x = self.bx
+		self.y = lerp(self.y, self.by, dt * 7)
 	end
 end
 
@@ -120,10 +111,6 @@ function Card:draw_to_screen(img, offset)
 	love.graphics.draw(img, self.x, self.y, 0, self.scaleX, self.scaleY)
 end
 
-
-function Card:set_offset(offset)
-end
-
-
+function Card:set_offset(offset) end
 
 return Card

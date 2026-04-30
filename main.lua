@@ -14,7 +14,6 @@ local const = require("utils.constants")
 
 ---@type Player
 local player_1 = Player.new("jay")
-local player_2 = Player.new("ben")
 
 ---@type Player[]
 local players = {}
@@ -43,9 +42,10 @@ function love.load()
 end
 
 function love.update(dt) 
-  for i=1, #player_1.hand.cards do
-    player_1.hand.cards[i]:update(dt)
-  end
+for i = #player_1.hand.cards, 1, -1 do
+        player_1.hand.cards[i]:update(dt)
+        -- Optional: if one card is hovered, break so you don't hover two at once
+    end
 end
 
 function love.draw(dt)
@@ -54,26 +54,16 @@ function love.draw(dt)
 	love.graphics.draw(Mat, const.GAMEBOARD_X, const.GAMEBOARD_Y, 0, Mat_scaleX, Mat_scaleY)
 	local test_offset = 150
 	for i, c in ipairs(cardImages) do
+    local card = player_1.hand.cards[i]
 		local dim_x, dim_y = c:getDimensions()
-		if i % 2 == 0 then
 			love.graphics.draw(
 				c,
-				player_1.hand.cards[i].x,
-        player_1.hand.cards[i].y,
+				card.x,
+        card.y,
 				0,
-				const.HAND_CARD_WIDTH / dim_x,
-				const.HAND_CARD_HEIGHT / dim_y
+				card.w/ dim_x,
+				card.h/ dim_y
 			)
-		else
-			love.graphics.draw(
-				c,
-				const.HAND_CARD_ORIGIN_X + (test_offset * i) / 2,
-				const.HAND_CARD_ORIGIN_Y,
-				0,
-				const.HAND_CARD_WIDTH / dim_x,
-				const.HAND_CARD_HEIGHT / dim_y
-			)
-		end
 	end
 end
 
