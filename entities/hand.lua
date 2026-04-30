@@ -1,6 +1,7 @@
 
 ---@module "utils.constants"
 local const = require("utils.constants")
+local request = require("utils.request")
 
 ---@module "entities.card"
 local Card = require("entities.card")
@@ -32,12 +33,23 @@ function Hand:update()
 end
 
 ---add card to hand
----@param card Card
-function Hand:add_card(card)
-  table.insert(self.cards, card.name)
-  print("added "..card.name)
-  self.cards[card.name] = card
-  self.cards[card.name].offset = const.HAND_CARD_OFFSET_X
+---@param card ScryfallCard
+function Hand:add_card(card, eid)
+  local game_card = Card.new(card.name,card,eid,card.image_uris.png,card.type_line,"Hand",nil,const.HAND_CARD_ORIGIN_Y)
+  self.count = self.count + 1
+  if self.count % 2 then
+    game_card.x = const.HAND_CARD_ORIGIN_X - (150*self.count)/2
+  else
+    game_card.x = const.HAND_CARD_ORIGIN_X + (150*self.count)/2
+  end
+  table.insert(self.cards, game_card)
+  ---when we add a card, create coroutine to fetch image from api
+
+  print("spawning", game_card.name)
+  game_card.card_png = request.card_image_from_uri(game_card.card_png, game_card.name)
+  print("added "..game_card.name)
+  self.cards[game_card.name] = game_card
+  self.cards[game_card.name].offset = const.HAND_CARD_OFFSET_X
 end
 
 function Hand:discard_card()

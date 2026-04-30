@@ -3,13 +3,13 @@ local const = require("utils.constants")
 
 ---@class Card
 ---@field name string
+---@field card Card
 ---@field offset number
 ---@field position number
----@field card_type CardType
 ---@field eid number --entity id
----@field image_fp string
+---@field card_png love.FileData
 ---@field type_line string
----@field location? GameLocations
+---@field location GameLocations
 ---@field x number
 ---@field y number
 ---@field w number
@@ -52,9 +52,9 @@ local GameLocations = {
 
 function Card.new(
 	name,
-	card_type,
+  card,
 	eid,
-	image_fp,
+	card_png,
 	type_line,
 	location,
 	x,
@@ -62,9 +62,9 @@ function Card.new(
 )
 	local self = setmetatable({}, Card)
 	self.name = name
-	self.card_type = card_type
+  self.card = card
 	self.eid = eid
-	self.image_fp = image_fp
+	self.card_png = card_png
 	self.type_line = type_line
 	self.location = location
 	self.x = x
@@ -106,8 +106,8 @@ function Card:update(dt)
 end
 
 function Card:load()
-	self.image_fp = "assets/images/black_lotus.png"
-	return self.image_fp
+	self.card_png = "assets/images/black_lotus.png"
+	return self.card_png
 end
 
 ---comment

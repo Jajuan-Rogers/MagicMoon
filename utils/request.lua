@@ -94,8 +94,12 @@ local TESTING = false
 
 require("paths")
 
+---@module "ssl.https"
 local https = require("ssl.https")
+
+---@module "5.4.ltn12"
 local ltn12 = require("ltn12")
+---@module "cjson"
 local json = require("cjson")
 
 local M = {}
@@ -214,7 +218,7 @@ end
 --- **moxfield**
 function M.fetch_scryfall_deck(fp)
 	if TESTING then
-    return M._read_test_file()
+		return M._read_test_file()
 	end
 	local api_url = "https://api.scryfall.com/cards/collection"
 	local deck_data
@@ -279,48 +283,32 @@ function M.fetch_scryfall_deck(fp)
 	return final_data
 end
 
----get a card given its name and other optional arguments
----if you do give the other optional arguments the lieklyhood
----of that card being found decreases unless you're certain a
----card of that name, set_id, collection number and printing
----actually exist in the scyfall database
----@param name any
----@param set_id? string
----@param collection_num? string
----@param foil? boolean
 function M.card_image_from_name(name, set_id, collection_num, foil) end
 
-function M.card_image_from_uri(uri) end
----scryfall gives a lot of information with each card that we will not
----be using in the game so here is where we will make a new table with
----all cards from the loaded deck and only attach the information we need
---- - name
---- - image_type
---- - image_uri
---- - card_faces
---- - rullings_uri
---- - scryfall_uri
---- - uri
----@param cards ScryfallCard[]
----@return table
--- function M.adjust_card_tables(cards)
--- 	local nt = {}
--- 	nt.cards = {}
--- 	for i, c in ipairs(cards) do
--- 		local card = {}
--- 		card.name = c.name
--- 		if c.card_faces ~= nil then
--- 			local faces = c.card_faces
--- 			---@cast faces ScryfallCardFace
--- 			card.multi_faced = true
--- 			card.faces = {}
--- 			for k, face in ipairs(faces) do
--- 				card.faces[k] = face
--- 				print(k, face.name)
--- 			end
--- 		end
--- 	end
--- end
+function M.card_image_from_uri(uri, name)
+  local out = "assets/images/loaded_cards/"..name
+	local chunks = {}
+
+	local response_body, code, response_headers = https.request{
+		url = uri,
+		sink = ltn12.sink.table(chunks),
+		headers = {
+			["User-Agent"] = "Magically/1.0",
+			["Accept"] = "image/png",
+		},
+	}
+
+	local data = nil
+
+	if code == 200 then
+		data = table.concat(chunks)
+		return love.filesystem.newFileData(data, name..".png")
+  else
+    print("ERROR: ", tostring(code), response_body, response_headers)
+    print("EXITING @ request.lua: 308")
+    os.exit()
+	end
+end
 
 --TESTING CODE--
 ----------------------------------------------------------------------
@@ -338,7 +326,6 @@ function M.card_image_from_uri(uri) end
 -- end
 -- print("that was ".. count .. " cards")
 ----------------------------------------------------------------------
-
 
 --- write api request data to file for testing without constantly
 --- requesting api for the same data

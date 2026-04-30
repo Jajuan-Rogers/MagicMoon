@@ -19,7 +19,7 @@ Player.__index = Player
 function Player.new(name)
 	local self = setmetatable({}, Player)
 	self.name = name or ("player_" .. math.random(1000))
-	self.deck = Deck.new(self, "test_files/caesar_deck.txt")
+	self.deck = Deck.new(self, "test_files/restless_deck.txt")
 	self.hand = Hand.new()
 	for _ = 1, 7 do
 		self.draw_card(self)
@@ -29,8 +29,7 @@ end
 
 function Player:draw_card()
 	local rng = math.random(100)
-  print(self.deck.library[rng])
-	self.hand:add_card(self.deck.library[rng])
+	self.hand:add_card(self.deck.library[rng], rng)
 end
 
 ---@param n number

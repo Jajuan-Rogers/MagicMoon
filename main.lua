@@ -29,37 +29,51 @@ function love.load()
 	Mat_scaleX = const.GAMEBOARD_WIDTH / mat_w
 	Mat_scaleY = const.GAMEBOARD_HEIGHT / mat_h
 
-  ---SLOP fix this fucking slop !!
+	---SLOP fix this fucking slop !!
 	for p = 1, #players do
 		local player = players[p]
-    print("making image for: ")
+		print("making image for: "..player_1.name)
 		local cards = player.hand.cards
 		for c = 1, #cards do
 			local card = cards[c]
-      print(card.name, card)
-      -- os.exit()
-			cardImages[card.name] = love.graphics.newImage(cards[card].image_fp)
-			print("image for: " .. card.name .. " loaded")
+			-- os.exit()
+			table.insert(cardImages, love.graphics.newImage(cards[card.name].card_png))
 		end
 	end
 end
 
-function love.update(dt) end
+function love.update(dt) 
+  for i=1, #player_1.hand.cards do
+    player_1.hand.cards[i]:update(dt)
+  end
+end
 
 function love.draw(dt)
-	love.graphics.setBackgroundColor(1,1,11,1)
+	love.graphics.setBackgroundColor(1, 1, 11, 1)
 	love.graphics.rectangle("line", const.GAMEBOARD_X, const.GAMEBOARD_Y, const.GAMEBOARD_WIDTH, const.GAMEBOARD_HEIGHT)
 	love.graphics.draw(Mat, const.GAMEBOARD_X, const.GAMEBOARD_Y, 0, Mat_scaleX, Mat_scaleY)
+	local test_offset = 150
 	for i, c in ipairs(cardImages) do
-		love.graphics.draw(
-			c,
-			const.HAND_CARD_ORIGIN_X,
-			const.HAND_CARD_ORIGIN_Y,
-			0,
-			const.GAMEBOARD_WIDTH,
-			const.HAND_CARD_HEIGHT
-		)
-    print("drawing ", cardImages[i])
+		local dim_x, dim_y = c:getDimensions()
+		if i % 2 == 0 then
+			love.graphics.draw(
+				c,
+				player_1.hand.cards[i].x,
+        player_1.hand.cards[i].y,
+				0,
+				const.HAND_CARD_WIDTH / dim_x,
+				const.HAND_CARD_HEIGHT / dim_y
+			)
+		else
+			love.graphics.draw(
+				c,
+				const.HAND_CARD_ORIGIN_X + (test_offset * i) / 2,
+				const.HAND_CARD_ORIGIN_Y,
+				0,
+				const.HAND_CARD_WIDTH / dim_x,
+				const.HAND_CARD_HEIGHT / dim_y
+			)
+		end
 	end
 end
 

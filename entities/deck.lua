@@ -37,7 +37,7 @@ function Deck.new(owner, deck_fp)
 		---assert that table is not empty
 		---
 
-		self.normalize_library_data(self)
+
 		self.commander = self.library.commander
 	else
 		--- notification system here !
