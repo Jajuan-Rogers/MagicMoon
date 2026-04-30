@@ -29,6 +29,7 @@ end
 
 function Player:draw_card()
 	local rng = math.random(100)
+  print(self.deck.library[rng])
 	self.hand:add_card(self.deck.library[rng])
 end
 

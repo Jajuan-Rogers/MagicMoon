@@ -2,7 +2,6 @@ require("paths")
 
 local request = require("utils.request")
 
-
 ---@module "cjson"
 local cjson = require("cjson")
 
@@ -34,6 +33,11 @@ function Deck.new(owner, deck_fp)
 	if deck_fp:find("txt") ~= nil then
 		self.deck_fp = deck_fp
 		self.library = request.fetch_scryfall_deck(deck_fp) or {}
+
+		---assert that table is not empty
+		---
+
+		self.normalize_library_data(self)
 		self.commander = self.library.commander
 	else
 		--- notification system here !
@@ -42,6 +46,7 @@ function Deck.new(owner, deck_fp)
 	end
 	return self
 end
+
 
 function Deck:initial_draw() end
 

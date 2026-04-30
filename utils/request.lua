@@ -1,3 +1,4 @@
+local TESTING = false
 ---@class ScryfallCard
 ---@field object string
 ---@field id string
@@ -105,6 +106,29 @@ function M.parse_deck_link(deck_url)
 	return deck_id
 end
 
+---returns testing data used only for dev test
+---@return ScryfallCard[]
+function M._read_test_file()
+	local f = io.open("test_files/scrytest.json", "r")
+	if not f then
+		print("TEST JSON FAILED TO READ !!")
+		os.exit()
+	end
+	local f_data = f:read("*a")
+	local data = json.decode(f_data)
+	f:close()
+	return data
+end
+
+function M._write_out_api_request(data)
+	local f = io.open("scrytest.json", "w")
+	if not f then
+		return
+	end
+	f:write(json.encode(data))
+	f:close()
+end
+
 ---reads txt file into json file of mtg card names
 ---the provided .txt file should only include card
 ---names. Do not use moxfields txt format for this
@@ -112,7 +136,7 @@ end
 ---@param fp string
 ---@returns table|nil
 function M.read_json_deck_file(fp)
-  print("reading"..fp)
+	print("reading" .. fp)
 	local f = io.open(fp, "r")
 	if not f then
 		return nil
@@ -123,9 +147,9 @@ function M.read_json_deck_file(fp)
 	for k, v in pairs(json_data.entries.nonlands) do
 		print(k, v.card_digest.name)
 	end
-  print(json_data)
-  os.exit()
-  return json_data
+	print(json_data)
+	os.exit()
+	return json_data
 end
 
 function M.read_txt_deck_file(fp)
@@ -189,9 +213,12 @@ end
 --- be sure to copy text if using **scryfall** or copy for Arena if using
 --- **moxfield**
 function M.fetch_scryfall_deck(fp)
+	if TESTING then
+    return M._read_test_file()
+	end
 	local api_url = "https://api.scryfall.com/cards/collection"
-  local deck_data
-  local commander
+	local deck_data
+	local commander
 	if fp:find(".txt", (#fp - 4)) then
 		deck_data, commander = M.read_txt_deck_file(fp)
 	elseif fp:find(".json", #fp - 6) then
@@ -247,6 +274,8 @@ function M.fetch_scryfall_deck(fp)
 	end
 	final_data = table.move(batch_2, 1, #batch_2, (#batch_1 + 1), batch_1)
 	final_data.commander = commander
+	-- M._write_out_api_request(final_data)
+	-- os.exit()
 	return final_data
 end
 
@@ -262,7 +291,6 @@ end
 function M.card_image_from_name(name, set_id, collection_num, foil) end
 
 function M.card_image_from_uri(uri) end
-
 ---scryfall gives a lot of information with each card that we will not
 ---be using in the game so here is where we will make a new table with
 ---all cards from the loaded deck and only attach the information we need
@@ -293,16 +321,27 @@ function M.card_image_from_uri(uri) end
 -- 		end
 -- 	end
 -- end
---
--- local d, e = M.fetch_scryfall_deck("test_files/caesar_deck.txt")
--- -- M.adjust_card_tables(d)
+
+--TESTING CODE--
+----------------------------------------------------------------------
+-- local d, e = M.fetch_scryfall_deck("test_files/restless_deck.txt")
+-- M.adjust_card_tables(d)
 -- print(e)
+-- local count = 0
 -- for k, v in pairs(d) do
 -- 	if k ~= "commander" then
 -- 		print(k, v.name)
 -- 	else
 -- 		print(k, v)
 -- 	end
+--   count = count + 1
 -- end
---
+-- print("that was ".. count .. " cards")
+----------------------------------------------------------------------
+
+
+--- write api request data to file for testing without constantly
+--- requesting api for the same data
+---@param data ScryfallCard[]
+
 return M

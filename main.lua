@@ -21,7 +21,6 @@ local players = {}
 local cardImages = {}
 
 table.insert(players, player_1)
-table.insert(players, player_2)
 
 function love.load()
 	love.window.setMode(const.SCREEN_WIDTH, const.SCREEN_HEIGHT, { fullscreen = true, fullscreentype = "exclusive" })
@@ -37,8 +36,8 @@ function love.load()
 		local cards = player.hand.cards
 		for c = 1, #cards do
 			local card = cards[c]
-      print(card.name, cards[card].image_fp)
-      os.exit()
+      print(card.name, card)
+      -- os.exit()
 			cardImages[card.name] = love.graphics.newImage(cards[card].image_fp)
 			print("image for: " .. card.name .. " loaded")
 		end

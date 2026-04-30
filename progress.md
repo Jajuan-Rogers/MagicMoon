@@ -9,6 +9,25 @@ out so it creates 13 individual cards **BUT** also make sure that it doesnt load
 swamp land images. we must know that we're loading in a basic land and check if we already have 
 that lands print already in ram or disk.
 
+1. word_
+2. wordasdasd_
+3. word asa_
+4. word_
+5. wordada_
+1. word_
+2. wordasda_
+3. word _
+4. worddas_
+5. word_
+1. word_
+2. word_
+3. word _
+4. word_
+5. word_
+
+
+
+
 
 
 # To add/fix 
@@ -20,3 +39,10 @@ that lands print already in ram or disk.
 - fix SLOP note at main.lua: 36
     - needs to have a more robust way of fetching images from api and loading them 
       need to learn how coroutines work in lua before then
+
+- [ x ] make a json api request function or redo original so it works with both
+        the latter will likely require clever clode which I wane to to avoid function(name, age, height)
+        **Make sure to NORMALIZE all data coming from the fetch function** if this is not done 
+        the structure of the table will be different depending on if its coming from a json file, a 
+        text file or a scryfall deck link
+
