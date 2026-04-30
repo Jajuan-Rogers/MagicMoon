@@ -104,49 +104,6 @@ function M.parse_deck_link(deck_url)
 	local deck_id = deck_url:match("/decks/([%w%-_]+)")
 	return deck_id
 end
----@deprecated
-function M.fetch_moxfield_deck(deck_url)
-	local deck_id = M.parse_deck_link(deck_url)
-	if not deck_id then
-		return nil, "deck id was not found in Moxfield link !"
-	end
-
-	local api_url = "https://api2.moxfield.com/v2/decks/all" .. deck_id .. "/export"
-	local response = {}
-
-	local _, code = https.request({
-		url = api_url,
-		method = "GET",
-		protocol = "tlsv1_3",
-		headers = {
-			["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-			["Accept"] = "application/json, text/plain, */*",
-			["Accept-Language"] = "en-US,en;q=0.9",
-			["Sec-Fetch-Dest"] = "empty",
-			["Sec-Fetch-Mode"] = "cors",
-			["Sec-Fetch-Site"] = "same-site",
-			["Referer"] = "https://www.moxfield.com/",
-			["Origin"] = "https://www.moxfield.com",
-			["Connection"] = "keep-alive",
-		},
-
-		sink = ltn12.sink.table(response),
-	})
-
-	if code ~= 200 then
-		return nil, "API request failed with HTPP status code: " .. tostring(code)
-	end
-
-	local raw_json = table.concat(response)
-
-	local success, parsed_deck = pcall(json.decode, raw_json)
-
-	if success then
-		return parsed_deck
-	else
-		return nil, "Failed to decode the JSON response"
-	end
-end
 
 ---reads txt file into json file of mtg card names
 ---the provided .txt file should only include card
@@ -154,6 +111,23 @@ end
 ---or it will fail
 ---@param fp string
 ---@returns table|nil
+function M.read_json_deck_file(fp)
+  print("reading"..fp)
+	local f = io.open(fp, "r")
+	if not f then
+		return nil
+	end
+
+	local f_data = f:read("*a")
+	local json_data = json.decode(f_data)
+	for k, v in pairs(json_data.entries.nonlands) do
+		print(k, v.card_digest.name)
+	end
+  print(json_data)
+  os.exit()
+  return json_data
+end
+
 function M.read_txt_deck_file(fp)
 	local f = io.open(fp, "r")
 	if not f then
@@ -161,52 +135,70 @@ function M.read_txt_deck_file(fp)
 	end
 
 	local deck_list = { identifiers = {} }
-
 	local commander = nil
 	local on_commander_line = false
+
 	for line in f:lines() do
-		if on_commander_line then
-			line = line:match("^%s*(.-)%s*$")
-			commander = line
-			_, commander = line:match("^(%d+)%s+(.+)$")
-			on_commander_line = false
-			goto continue
-		end
+		-- 1. Clean the line (strips leading/trailing whitespace and tabs)
+		local clean_line = line:match("^%s*(.-)%s*$")
 
-		line = line:match("^%s*(.-)%s*$")
-
-		if line == "Commander" or line == "// Commander" then
+		if clean_line == "" then
+		elseif clean_line == "Commander" or clean_line == "// Commander" then
 			on_commander_line = true
-			goto continue
+		elseif clean_line:sub(1, 2) == "//" then
+		else
+			local count_str, name = clean_line:match("^(%d+)%s+(.+)$")
+
+			local count = tonumber(count_str) or 1
+
+			local card_name = name or clean_line
+			---@cast card_name string
+
+			local a = card_name:find("/", 1)
+			if a then
+				card_name = card_name:sub(1, a - 1)
+			else
+			end
+
+			if on_commander_line then
+				commander = card_name
+				on_commander_line = false
+			end
+
+			for _ = 1, count do
+				table.insert(deck_list.identifiers, { name = card_name })
+			end
 		end
-
-		local _, name = line:match("^(%d+)%s+(.+)$")
-
-		if name then
-			table.insert(deck_list.identifiers, { name = name })
-		elseif #line > 0 then
-			table.insert(deck_list.identifiers, { name = line })
-		end
-
-		::continue::
 	end
+
 	f:close()
-	if commander == nil then
-		return nil
+
+	-- Safety Check: If the file had no Commander section, do you want to abort the whole file?
+	if not commander then
+		print("Warning: No Commander found in file.")
+		return nil -- (Uncomment this ONLY if a missing commander should break the whole import)
 	end
 	return deck_list, commander
 end
 
 ---get deck from scryfall given a txt file
----@param txt_fp string
+---@param fp string
 ---@return Card[]|nil cards
 ---@return nil|string #error fetching api data or parsing card file or
 --- your commander was not found in file. If the commander was not found
 --- be sure to copy text if using **scryfall** or copy for Arena if using
 --- **moxfield**
-function M.fetch_scryfall_deck(txt_fp)
+function M.fetch_scryfall_deck(fp)
 	local api_url = "https://api.scryfall.com/cards/collection"
-	local deck_data, commander = M.read_txt_deck_file(txt_fp)
+  local deck_data
+  local commander
+	if fp:find(".txt", (#fp - 4)) then
+		deck_data, commander = M.read_txt_deck_file(fp)
+	elseif fp:find(".json", #fp - 6) then
+		deck_data, commander = M.read_json_deck_file(fp)
+	else
+		return nil, "wrong file fomrat provided, only support for txt and json"
+	end
 
 	if deck_data == nil then
 		return nil, "No commander found in deck !"
@@ -215,6 +207,7 @@ function M.fetch_scryfall_deck(txt_fp)
 	local all_ids = deck_data.identifiers
 	local batch_1 = { identifiers = table.move(deck_data.identifiers, 1, 75, 1, {}) }
 	local batch_2 = { identifiers = table.move(all_ids, 76, #all_ids, 1, {}) }
+
 	local batch = { batch_1, batch_2 }
 
 	local final_data
@@ -236,7 +229,7 @@ function M.fetch_scryfall_deck(txt_fp)
 		if code == 200 then
 			local final_response = table.concat(response_chunks)
 			final_data = json.decode(final_response)
-			print("successfully recieved deck")
+			-- print("successfully recieved deck")
 		else
 			print("ERROR: ", tostring(code), r, tostring(status))
 			print(table.concat(response_chunks))
@@ -282,35 +275,33 @@ function M.card_image_from_uri(uri) end
 --- - uri
 ---@param cards ScryfallCard[]
 ---@return table
-function M.adjust_card_tables(cards)
-	local nt = {}
-	nt.cards = {}
-	for i, c in ipairs(cards) do
-		local card = {}
-		card.name = c.name
-		if c.card_faces ~= nil then
-			local faces = c.card_faces
-			---@cast faces ScryfallCardFace
-			card.multi_faced = true
-      card.faces = {}
-			for k,face in ipairs(faces) do
-        card.faces[k] = face
-        print(k, face.name)
-			end
-		end
-	end
-end
-
--- local d, e = M.fetch_scryfall_deck("test_files/restless_mox.txt")
--- M.adjust_card_tables(d)
--- 	print(e)
--- end
--- for k, v in pairs(d) do
--- 	if v.card_faces ~= nil then
--- 		for face = 1, #v.card_faces do
--- 			print(v.card_faces[face].name)
--- 			print(v.card_faces[face].image_uris.png)
+-- function M.adjust_card_tables(cards)
+-- 	local nt = {}
+-- 	nt.cards = {}
+-- 	for i, c in ipairs(cards) do
+-- 		local card = {}
+-- 		card.name = c.name
+-- 		if c.card_faces ~= nil then
+-- 			local faces = c.card_faces
+-- 			---@cast faces ScryfallCardFace
+-- 			card.multi_faced = true
+-- 			card.faces = {}
+-- 			for k, face in ipairs(faces) do
+-- 				card.faces[k] = face
+-- 				print(k, face.name)
+-- 			end
 -- 		end
+-- 	end
+-- end
+--
+-- local d, e = M.fetch_scryfall_deck("test_files/caesar_deck.txt")
+-- -- M.adjust_card_tables(d)
+-- print(e)
+-- for k, v in pairs(d) do
+-- 	if k ~= "commander" then
+-- 		print(k, v.name)
+-- 	else
+-- 		print(k, v)
 -- 	end
 -- end
 --

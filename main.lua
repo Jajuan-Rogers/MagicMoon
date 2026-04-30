@@ -6,8 +6,8 @@ local Player = require("entities.player")
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
 
----@module "utils.constants"
-local Card = require("entities.card")
+---@module "utils.request"
+local request = require("utils.request")
 
 ---@module "utils.constants"
 local const = require("utils.constants")
@@ -30,12 +30,15 @@ function love.load()
 	Mat_scaleX = const.GAMEBOARD_WIDTH / mat_w
 	Mat_scaleY = const.GAMEBOARD_HEIGHT / mat_h
 
+  ---SLOP fix this fucking slop !!
 	for p = 1, #players do
 		local player = players[p]
     print("making image for: ")
 		local cards = player.hand.cards
 		for c = 1, #cards do
 			local card = cards[c]
+      print(card.name, cards[card].image_fp)
+      os.exit()
 			cardImages[card.name] = love.graphics.newImage(cards[card].image_fp)
 			print("image for: " .. card.name .. " loaded")
 		end
@@ -85,4 +88,3 @@ end
 -- 	g = inc_color_val(g_channel,dt)
 -- 	b = inc_color_val(b_channel,dt)
 -- end
---

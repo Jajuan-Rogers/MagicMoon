@@ -23,7 +23,6 @@ function Hand.new()
   self.count = 0
   self.last_count = 0
   self.cards = {}
-
   return self
 end
 
@@ -35,6 +34,7 @@ end
 ---add card to hand
 ---@param card Card
 function Hand:add_card(card)
+  table.insert(self.cards, card.name)
   print("added "..card.name)
   self.cards[card.name] = card
   self.cards[card.name].offset = const.HAND_CARD_OFFSET_X
