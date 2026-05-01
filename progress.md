@@ -9,25 +9,6 @@ out so it creates 13 individual cards **BUT** also make sure that it doesnt load
 swamp land images. we must know that we're loading in a basic land and check if we already have 
 that lands print already in ram or disk.
 
-1. word_
-2. wordasdasd_
-3. word asa_
-4. word_
-5. wordada_
-1. word_
-2. wordasda_
-3. word _
-4. worddas_
-5. word_
-1. word_
-2. word_
-3. word _
-4. word_
-5. word_
-
-
-
-
 
 
 # To add/fix 
@@ -46,3 +27,6 @@ that lands print already in ram or disk.
         the structure of the table will be different depending on if its coming from a json file, a 
         text file or a scryfall deck link
 
+- need to reduce the size of functions in main.lua
+  calls to load, update and draw need to handle be 
+  handled in each entities respective function

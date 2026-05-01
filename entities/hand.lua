@@ -25,13 +25,15 @@ function Hand.new()
 	return self
 end
 
+
 function Hand:update() end
+
 
 ---add card to hand
 ---@param card ScryfallCard
 function Hand:add_card(card, eid)
 	local game_card =
-		Card.new(card.name, card, eid, card.image_uris.png, card.type_line, "Hand", nil, const.HAND_CARD_ORIGIN_Y)
+  Card.new(card.name, card, eid, card.image_uris.png, card.type_line, "Hand", nil, const.HAND_CARD_ORIGIN_Y)
 	self.count = self.count + 1
 	if self.count % 2 == 0 then
 		game_card.bx = const.HAND_CARD_ORIGIN_X + (150 * self.count) / 2
@@ -41,20 +43,25 @@ function Hand:add_card(card, eid)
 		game_card.x = const.HAND_CARD_ORIGIN_X - (150 * self.count) / 2
 	end
 	game_card.by = const.HAND_CARD_ORIGIN_Y
-	table.insert(self.cards, game_card)
+	table.insert(self.cards, self.count, game_card)
 	---when we add a card, create coroutine to fetch image from api
-
-	print("spawning", game_card.name)
 	game_card.card_png = request.card_image_from_uri(game_card.card_png, game_card.name)
 	print("added " .. game_card.name)
 	self.cards[game_card.name] = game_card
 	self.cards[game_card.name].offset = const.HAND_CARD_OFFSET_X
+	print("jay now had " .. self.count .. "card in hand")
 end
+
 
 function Hand:discard_card()
 	self.current_card_offset = self.current_card_offset + const.HAND_CARD_OFFSET_X
 end
 
+
 function Hand:draw() end
+
+---load or reload cards in hand
+---@param reload? boolean
+function Hand:load(reload) end
 
 return Hand
