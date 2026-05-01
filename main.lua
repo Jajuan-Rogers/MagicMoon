@@ -6,19 +6,21 @@ local Player = require("entities.player")
 ---@module 'ui.gameboard'
 local gameboard = require("ui.gameboard")
 
----@module "utils.request"
-local request = require("utils.request")
 
 ---@module "utils.constants"
 local const = require("utils.constants")
 
 ---@type Player
-local player_1 = Player.new("jay")
+local player_1 = Player.new("jay", "test_files/restless_deck.txt") --temp way of loading deck
+os.exit()
 
 ---@type Player[]
 local players = {}
 local cardImages = {}
 
+
+---players who join me or players who are in a 
+---session that I join will be placed here !
 table.insert(players, player_1)
 
 function love.load()
@@ -27,20 +29,9 @@ function love.load()
 	local mat_w, mat_h = Mat:getDimensions()
 	Mat_scaleX = const.GAMEBOARD_WIDTH / mat_w
 	Mat_scaleY = const.GAMEBOARD_HEIGHT / mat_h
-	---SLOP fix this fucking slop !!
 
-	for p = 1, #players do
-		local player = players[p]
-		print("making image for: " .. player_1.name)
-		local cards = player.hand.cards
-
-		for c = 1, #cards do
-			local card = cards[c]
-			-- os.exit()
-
-			table.insert(cardImages, love.graphics.newImage(cards[card.name].card_png))
-		end
-	end
+  --- loop through players and load in all of there cards to disk !
+  --- make a player:load() function
 end
 
 function love.update(dt)
@@ -56,9 +47,7 @@ function love.draw(dt)
 	love.graphics.draw(Mat, const.GAMEBOARD_X, const.GAMEBOARD_Y, 0, Mat_scaleX, Mat_scaleY)
 	local test_offset = 150
 
-	for i, c in ipairs(cardImages) do
-		local card = player_1.hand.cards[i]
-		local dim_x, dim_y = c:getDimensions()
-		love.graphics.draw(c, card.x, card.y, 0, card.w / dim_x, card.h / dim_y)
-	end
+  ---check if there are cards chached in ram, 
+  ---if they are add and they're needed add them 
+  ---if a card on disk is needed get it and load it
 end

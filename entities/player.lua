@@ -20,10 +20,11 @@ Player.__index = Player
 
 ---Create a new player
 ---@param name string
-function Player.new(name)
+---@param selected_deck string --the name of a deck folder sitting in the games decks/ dir
+function Player.new(name, selected_deck)
 	local self = setmetatable({}, Player)
 	self.name = name or ("player_" .. math.random(1000))
-	self.deck = Deck.new(self, "test_files/restless_deck.txt")
+	self.deck = Deck.new(self, selected_deck) --se
 	self.hand = Hand.new()
 	self.health = 40
 	self.mullagans_count = 0

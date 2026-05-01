@@ -1,3 +1,30 @@
+require("paths")
+
+---@module "ssl.https"
+local https = require("ssl.https")
+---@module "5.4.ltn12"
+local ltn12 = require("ltn12")
+---@module "cjson"
+local json = require("cjson")
+
+local thread_input = love.thread.getChannel("in_request")
+local thread_output = love.thread.getChannel("out_request")
+
+---@enum RequestType
+local RequestType = {
+	CARD_IMAGE = "CARD_IMAGE",
+	DECK_URL = "DECK_URL",
+	DECK_FILE = "DECK_FP",
+	KILL_THREAD = "KILL_THREAD",
+}
+
+---@class RequestPacket
+---@field request_type RequestType
+---@field data string
+local RequestPacket
+
+---@module "utils.constants"
+local const = require("utils.constants")
 local TESTING = false
 ---@class ScryfallCard
 ---@field object string
@@ -91,17 +118,6 @@ local TESTING = false
 ---@field flavor_text string|nil
 ---@field artist string|nil
 ---@field image_uris table<string,string>|nil
-
-require("paths")
-
----@module "ssl.https"
-local https = require("ssl.https")
-
----@module "5.4.ltn12"
-local ltn12 = require("ltn12")
----@module "cjson"
-local json = require("cjson")
-
 local M = {}
 
 ---@param deck_url string
@@ -223,6 +239,7 @@ function M.fetch_scryfall_deck(fp)
 	local api_url = "https://api.scryfall.com/cards/collection"
 	local deck_data
 	local commander
+
 	if fp:find(".txt", (#fp - 4)) then
 		deck_data, commander = M.read_txt_deck_file(fp)
 	elseif fp:find(".json", #fp - 6) then
@@ -236,15 +253,20 @@ function M.fetch_scryfall_deck(fp)
 	end
 
 	local all_ids = deck_data.identifiers
+  --- make this batching more dynamic, since some decks will come with over 100 
+  --- cards to account for tokens 
+	local batch_1_size = math.ceil(#all_ids * 0.75)
 	local batch_1 = { identifiers = table.move(deck_data.identifiers, 1, 75, 1, {}) }
-	local batch_2 = { identifiers = table.move(all_ids, 76, #all_ids, 1, {}) }
+	local batch_2 = { identifiers = table.move(all_ids, 75, #all_ids, 1, {}) }
 
 	local batch = { batch_1, batch_2 }
 
 	local final_data
+
 	for i = 1, #batch do
 		local request_body = json.encode(batch[i])
 		local response_chunks = {}
+
 		local r, code, _, status = https.request({
 			url = api_url,
 			method = "POST",
@@ -257,6 +279,8 @@ function M.fetch_scryfall_deck(fp)
 			source = ltn12.source.string(request_body),
 			sink = ltn12.sink.table(response_chunks),
 		})
+
+		print("BATCH_" .. i .. " is done !")
 		if code == 200 then
 			local final_response = table.concat(response_chunks)
 			final_data = json.decode(final_response)
@@ -264,6 +288,7 @@ function M.fetch_scryfall_deck(fp)
 		else
 			print("ERROR: ", tostring(code), r, tostring(status))
 			print(table.concat(response_chunks))
+
 			if i == 1 then
 				print("This error occured while requesting api for 'batch_1' cards")
 			else
@@ -278,57 +303,73 @@ function M.fetch_scryfall_deck(fp)
 	end
 	final_data = table.move(batch_2, 1, #batch_2, (#batch_1 + 1), batch_1)
 	final_data.commander = commander
-	-- M._write_out_api_request(final_data)
-	-- os.exit()
+
 	return final_data
 end
 
 function M.card_image_from_name(name, set_id, collection_num, foil) end
 
-function M.card_image_from_uri(uri, name)
-  local out = "assets/images/loaded_cards/"..name
-	local chunks = {}
+---get all deck images from api given a array of image uris (MUST BE PNGS!)
+---and stro them in a local file on disk to be fetched later when game is
+---loaded. This does mean players DO NOT load decks while in a match, they
+---preload the decks in the menu and choose there deck just before the match
+---begins
+---@param image_uris string[]
+---@param deck_name string
+---@return nil
+function M.download_card_images(image_uris, deck_name)
+	local f = love.filesystem.getInfo(const.DECKS_DIR .. deck_name)
 
-	local response_body, code, response_headers = https.request{
-		url = uri,
-		sink = ltn12.sink.table(chunks),
-		headers = {
-			["User-Agent"] = "Magically/1.0",
-			["Accept"] = "image/png",
-		},
-	}
+	if not f then
+		love.filesystem.createDirectory(const.DECKS_DIR)
+		love.filesystem.newFile(const.DECKS_DIR .. deck_name)
+	end
+
+	local chunks = {}
+	local code
+	local response_headers
+	local status
+	for i = 1, #image_uris do
+		local _, code, response_headers, status = https.request({
+			url = image_uris[i],
+			sink = ltn12.sink.table(chunks),
+			headers = {
+				["User-Agent"] = "Magically/1.0",
+				["Accept"] = "image/png",
+			},
+		})
+	end
 
 	local data = nil
 
 	if code == 200 then
 		data = table.concat(chunks)
-		return love.filesystem.newFileData(data, name..".png")
-  else
-    print("ERROR: ", tostring(code), response_body, response_headers)
-    print("EXITING @ request.lua: 308")
-    os.exit()
+		return love.filesystem.newFileData(data, deck_name .. ".png")
+	else
+		print("ERROR: ", tostring(code), response_headers)
+		print("EXITING @ request.lua: 308")
+		os.exit()
 	end
 end
 
---TESTING CODE--
-----------------------------------------------------------------------
--- local d, e = M.fetch_scryfall_deck("test_files/restless_deck.txt")
--- M.adjust_card_tables(d)
--- print(e)
--- local count = 0
--- for k, v in pairs(d) do
--- 	if k ~= "commander" then
--- 		print(k, v.name)
--- 	else
--- 		print(k, v)
--- 	end
---   count = count + 1
--- end
--- print("that was ".. count .. " cards")
-----------------------------------------------------------------------
+while true do
+	---@type RequestPacket
 
---- write api request data to file for testing without constantly
---- requesting api for the same data
----@param data ScryfallCard[]
+  local r = thread_input:pop()
 
-return M
+  if not r then
+    love.timer.sleep(0.03)
+    goto continue
+  end
+  local rt = r.request_type
+  local rd = r.data
+
+  if rt == "KILL_THREAD" then
+    break
+  elseif rt == "DECK_FP" then
+    local x = M.fetch_scryfall_deck(rd)
+
+    thread_output:push(x)
+  end
+  ::continue::
+end

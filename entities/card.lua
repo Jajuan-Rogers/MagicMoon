@@ -6,8 +6,9 @@ local const = require("utils.constants")
 ---@field card Card
 ---@field offset number
 ---@field position number
----@field eid number --entity id
+---@field id number --entity id
 ---@field card_png love.FileData
+---@field image_uri string
 ---@field type_line string
 ---@field location GameLocations
 ---@field x number
@@ -48,12 +49,13 @@ local GameLocations = {
 ---@field set_name string
 ---
 
-function Card.new(name, card, eid, card_png, type_line, location, x, y, bx, by)
+function Card.new(name, card, card_png, image_uri, type_line, location, x, y, bx, by)
 	local self = setmetatable({}, Card)
 	self.name = name
 	self.card = card
-	self.eid = eid
+	self.id = nil --id will be given once the player joins a game
 	self.card_png = card_png
+	self.image_uri = image_uri
 	self.type_line = type_line
 	self.location = location
 	self.x = x
@@ -78,7 +80,7 @@ function Card:update(dt)
 		if love.keyboard.isDown("lalt") then
 			self.w = const.HAND_CARD_ZOOM_WIDTH
 			self.h = const.HAND_CARD_ZOOM_HEIGHT
-      self.y = const.HAND_CARD_ZOOM_Y
+			self.y = const.HAND_CARD_ZOOM_Y
 		else
 			self.w = const.HAND_CARD_WIDTH + (const.HAND_CARD_WIDTH * 0.20)
 			self.h = const.HAND_CARD_HEIGHT + (const.HAND_CARD_HEIGHT * 0.20)
@@ -97,7 +99,6 @@ function Card:update(dt)
 end
 
 function Card:load()
-	self.card_png = "assets/images/black_lotus.png"
 	return self.card_png
 end
 

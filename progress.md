@@ -11,6 +11,7 @@ that lands print already in ram or disk.
 
 
 
+
 # To add/fix 
 - need to add the ability to have two commanders
   make single commander into a table any way 'normalization'
@@ -30,3 +31,11 @@ that lands print already in ram or disk.
 - need to reduce the size of functions in main.lua
   calls to load, update and draw need to handle be 
   handled in each entities respective function
+
+
+## Session 5/1/26
+- Deck class will be loaded when the game starts and the player selects the deck they want to use. 
+we SHOULD NOT create a deck until the players have chosen one to load from A FILE ! YES decks will 
+need to be preloaded BEFORE the game starts unlike tabletop sim. Since tabletop covers a wide range 
+of card games it doesnt make sense for it to do it that way. 
+

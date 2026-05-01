@@ -1,6 +1,7 @@
 local const = {}
 
-const.SCREEN_WIDTH, const.SCREEN_HEIGHT = love.window.getDesktopDimensions()
+-- const.SCREEN_WIDTH, const.SCREEN_HEIGHT = love.window.getDesktopDimensions()
+const.SCREEN_WIDTH, const.SCREEN_HEIGHT = 5,5
 const.HAND_CARD_WIDTH = 200
 const.HAND_CARD_HEIGHT = const.HAND_CARD_WIDTH * (3.5 / 2.5) -- Results in 280
 const.HAND_CARD_ORIGIN_X = const.SCREEN_WIDTH / 2
@@ -24,6 +25,10 @@ const.GAMEBOARD_X = gb_x
 const.GAMEBOARD_Y = gb_y
 
 ---color constants
-const.GLOBAL_BG_COLOR = love.math.colorFromBytes(0, 71, 171)
+-- const.GLOBAL_BG_COLOR = love.math.colorFromBytes(0, 71, 171)
+
+
+--File paths
+const.DECKS_DIR = "./decks/"
 
 return const
