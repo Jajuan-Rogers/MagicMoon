@@ -13,8 +13,6 @@ local Card = require("entities.card")
 local Hand = {}
 Hand.__index = Hand
 
----create hand object, (THIS MUST ALWAYS BE CREATED AFTER PLAYER
----AND IMMEDIATELY CONNECTED TO A PLAYER !)
 ---@return Hand
 function Hand.new()
 	local self = setmetatable({}, Hand)

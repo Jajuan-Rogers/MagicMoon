@@ -6,11 +6,6 @@ local const = require("utils.constants")
 ---@field w number
 ---@field h number
 
----@class RGBa
----@field r? number
----@field g? number
----@field b? number
----@field a? number
 
 ---@class GameBoard
 ---@field playmat_image? string

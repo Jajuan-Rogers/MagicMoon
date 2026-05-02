@@ -25,7 +25,6 @@ function Player.new(name, selected_deck)
 	local self = setmetatable({}, Player)
 	self.name = name or ("player_" .. math.random(1000))
 	self.deck = Deck.new(self, selected_deck) --se
-	self.hand = Hand.new()
 	self.health = 40
 	self.mullagans_count = 0
 	self:initial_card_draw()
